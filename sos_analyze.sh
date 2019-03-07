@@ -8,7 +8,8 @@ main()
 
   sos_path=$1
   base_dir=$sos_path
-  final_name=$(echo $base_dir | grep -E -o sosreport.*)
+  #final_name=$(echo $base_dir | grep -E -o sosreport.*)
+  final_name=$(echo $base_dir | sed -e 's#/$##g' | grep -o sos.* | awk -F"/" '{print $NF}')
 
   echo "The sosreport is: $base_dir"												| tee -a $FOREMAN_REPORT
 
