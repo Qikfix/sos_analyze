@@ -443,6 +443,13 @@ report()
   echo "---"																																																						>> $FOREMAN_REPORT
   echo 																																																									>> $FOREMAN_REPORT
 
+  echo "// virt-who configuration content files (hidden characters)"																												>> $FOREMAN_REPORT
+  echo "for b in \$(ls -1 \$base_dir/etc/virt-who.d/*); do echo; echo \$b; echo \"===\"; cat -vet \$b; echo \"===\"; done"	>> $FOREMAN_REPORT
+  echo "---"																																																								>> $FOREMAN_REPORT
+  for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat -vet $b; echo "==="; done									&>> $FOREMAN_REPORT
+  echo "---"																																																								>> $FOREMAN_REPORT
+  echo 																																																											>> $FOREMAN_REPORT
+
 
   echo "## Hypervisors tasks"																																														| tee -a $FOREMAN_REPORT
   echo 																																																									>> $FOREMAN_REPORT
