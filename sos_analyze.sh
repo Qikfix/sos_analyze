@@ -16,6 +16,11 @@ main()
   base_dir=$sos_path
   final_name=$(echo $base_dir | sed -e 's#/$##g' | grep -o sos.* | awk -F"/" '{print $NF}')
 
+  if [ ! -f $base_dir/version.txt ]; then
+    echo "This is not a sosreport dir, please inform the path to the correct one."
+    exit 1
+  fi
+
   echo "The sosreport is: $base_dir"												| tee -a $FOREMAN_REPORT
 
   report $base_dir $sub_dir
