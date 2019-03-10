@@ -542,6 +542,13 @@ report()
   echo "---"																								>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
+  echo "// custom hiera"																							>> $FOREMAN_REPORT
+  echo "cat $base_foreman/etc/foreman-installer/custom-hiera.yaml"		>> $FOREMAN_REPORT
+  echo "---"																													>> $FOREMAN_REPORT
+  cat $base_foreman/etc/foreman-installer/custom-hiera.yaml						&>> $FOREMAN_REPORT
+  echo "---"																													>> $FOREMAN_REPORT
+  echo 																																>> $FOREMAN_REPORT
+
 
 
 
