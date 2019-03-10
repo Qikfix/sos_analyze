@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#
+# Created ....: 03/04/2019
+# Developer ..: Waldirio M Pinheiro <waldirio@gmail.com / waldirio@redhat.com>
+# Purpose ....: Analyze sosreport and summarize the information (focus on Satellite info)
+#
+
 FOREMAN_REPORT="/tmp/$$.log"
 
 main()
@@ -8,7 +14,6 @@ main()
 
   sos_path=$1
   base_dir=$sos_path
-  #final_name=$(echo $base_dir | grep -E -o sosreport.*)
   final_name=$(echo $base_dir | sed -e 's#/$##g' | grep -o sos.* | awk -F"/" '{print $NF}')
 
   echo "The sosreport is: $base_dir"												| tee -a $FOREMAN_REPORT
@@ -22,14 +27,14 @@ report()
   base_dir=$1
   sub_dir=$2
 
-  base_foreman="$1/sos_commands/foreman/foreman-debug/var/log/"
+  base_foreman="$1/sos_commands/foreman/foreman-debug/"
 
   echo "### Welcome to Report ###"													| tee -a $FOREMAN_REPORT
   echo "### CEE/SysMGMT ###"																| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
-  echo "## naming resolution"																| tee -a $FOREMAN_REPORT
+  echo "## Naming Resolution"																| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
   echo "// hosts entries"																		>> $FOREMAN_REPORT
@@ -47,7 +52,7 @@ report()
   echo 																											>> $FOREMAN_REPORT
 
 
-  echo "## network information"															| tee -a $FOREMAN_REPORT
+  echo "## Network Information"															| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
   echo "// ip address"																			>> $FOREMAN_REPORT
@@ -64,10 +69,20 @@ report()
   echo "---"																								>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
+  echo "## Selinux"																					| tee -a $FOREMAN_REPORT
+  echo 																											>> $FOREMAN_REPORT
+
+  echo "// selinux conf"																		>> $FOREMAN_REPORT
+  echo "cat $base_dir/etc/selinux/config"										>> $FOREMAN_REPORT
+  echo "---"																								>> $FOREMAN_REPORT
+  cat $base_dir/etc/selinux/config													&>> $FOREMAN_REPORT
+  echo "---"																								>> $FOREMAN_REPORT
+  echo 																											>> $FOREMAN_REPORT
 
 
 
-  echo "## installed packages (satellite)"									| tee -a $FOREMAN_REPORT
+
+  echo "## Installed Packages (satellite)"									| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
   echo "// all installed packages which contain satellite"	>> $FOREMAN_REPORT
@@ -110,28 +125,16 @@ report()
   echo 																																													>> $FOREMAN_REPORT
 
 
-
-#  echo "cat $base_dir/"	| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
-#  cat $base_dir/		| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
-
-  echo "## REPOS"																											| tee -a $FOREMAN_REPORT
-  echo 																																>> $FOREMAN_REPORT
+  echo "## Repos"																										| tee -a $FOREMAN_REPORT
+  echo 																															>> $FOREMAN_REPORT
 
 
-  echo "// enabled repos"																							>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/yum/yum_-C_repolist"								>> $FOREMAN_REPORT
-  echo "---"																													>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/yum/yum_-C_repolist											&>> $FOREMAN_REPORT
-  echo "---"																													>> $FOREMAN_REPORT
-  echo 																																>> $FOREMAN_REPORT
-
-#$ cat sos_commands/yum/yum_list_installed
-#  echo "cat $base_dir/sos_commands/yum/yum_list_installed"	| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
-#  cat $base_dir/sos_commands/yum/yum_list_installed		| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
+  echo "// enabled repos"																						>> $FOREMAN_REPORT
+  echo "cat $base_dir/sos_commands/yum/yum_-C_repolist"							>> $FOREMAN_REPORT
+  echo "---"																												>> $FOREMAN_REPORT
+  cat $base_dir/sos_commands/yum/yum_-C_repolist										&>> $FOREMAN_REPORT
+  echo "---"																												>> $FOREMAN_REPORT
+  echo 																															>> $FOREMAN_REPORT
 
   echo "// yum history"																							>> $FOREMAN_REPORT
   echo "cat $base_dir/sos_commands/yum/yum_history"									>> $FOREMAN_REPORT
@@ -148,9 +151,22 @@ report()
   echo 																															>> $FOREMAN_REPORT
 
 
-  echo "## Upgrade"																									| tee -a $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
+  echo "## Upgrade"																																																			| tee -a $FOREMAN_REPORT
+  echo 																																																									>> $FOREMAN_REPORT
 
+  echo "// Error on the upgrade file"																																										>> $FOREMAN_REPORT
+  echo "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"	>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log	| wc -l					&>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  echo 																																																									>> $FOREMAN_REPORT
+
+  echo "// Error on the upgrade file (full info)"																																				>> $FOREMAN_REPORT
+  echo "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"					>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log									&>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  echo 																																																									>> $FOREMAN_REPORT
 
   echo "// last 20 lines from upgrade log"																															>> $FOREMAN_REPORT
   echo "tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"	>> $FOREMAN_REPORT
@@ -196,6 +212,14 @@ report()
   echo "---"																																	>> $FOREMAN_REPORT
   echo 																																				>> $FOREMAN_REPORT
 
+  echo "// users memory consumers"																																																																						>> $FOREMAN_REPORT
+  echo "cat \$base_foreman/ps-awfux | sort -nr | awk '{print \$1, \$6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"	>> $FOREMAN_REPORT
+  echo "---"																																																																																	>> $FOREMAN_REPORT
+  cat $base_foreman/ps-awfux | sort -nr | awk '{print $1, $6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[$1] += $2} END{for (i in a) print i, a[i]}' | sort -nrk2					&>> $FOREMAN_REPORT
+  echo "---"																																																																																	>> $FOREMAN_REPORT
+  echo 																																																																																				>> $FOREMAN_REPORT
+
+
 
   echo "## CPU"																																| tee -a $FOREMAN_REPORT
   echo 																																				>> $FOREMAN_REPORT
@@ -206,6 +230,19 @@ report()
   cat $base_dir/proc/cpuinfo | grep processor | wc -l													&>> $FOREMAN_REPORT
   echo "---"																																	>> $FOREMAN_REPORT
   echo 																																				>> $FOREMAN_REPORT
+
+
+  echo "## Messages"																													| tee -a $FOREMAN_REPORT
+  echo 																																				>> $FOREMAN_REPORT
+
+  echo "// error on message file"																							>> $FOREMAN_REPORT
+  echo "grep ERROR $base_dir/var/log/messages"																>> $FOREMAN_REPORT
+  echo "---"																																	>> $FOREMAN_REPORT
+  grep ERROR $base_dir/var/log/messages																				&>> $FOREMAN_REPORT
+  echo "---"																																	>> $FOREMAN_REPORT
+  echo 																																				>> $FOREMAN_REPORT
+
+
 
 
   echo "## Foreman Tasks"																																	| tee -a $FOREMAN_REPORT
@@ -274,7 +311,7 @@ report()
   echo 																																										>> $FOREMAN_REPORT
 
 
-  echo "## QPIDD"																																																	| tee -a $FOREMAN_REPORT
+  echo "## Qpidd"																																																	| tee -a $FOREMAN_REPORT
   echo 																																																						>> $FOREMAN_REPORT
 
   echo "// total number of pulp agents"																																						>> $FOREMAN_REPORT
@@ -284,33 +321,33 @@ report()
   echo "---"																																																			>> $FOREMAN_REPORT
   echo 																																																						>> $FOREMAN_REPORT
 
-  echo "// total number of (active) pulp agents"																																	>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1     1$" | wc -l"	>> $FOREMAN_REPORT
-  echo "---"																																																			>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1     1$" | wc -l				&>> $FOREMAN_REPORT
-  echo "---"																																																			>> $FOREMAN_REPORT
-  echo 																																																						>> $FOREMAN_REPORT
+  echo "// total number of (active) pulp agents"																																		>> $FOREMAN_REPORT
+  echo "cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1     1\$" | wc -l"	>> $FOREMAN_REPORT
+  echo "---"																																																				>> $FOREMAN_REPORT
+  cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1     1$" | wc -l					&>> $FOREMAN_REPORT
+  echo "---"																																																				>> $FOREMAN_REPORT
+  echo 																																																							>> $FOREMAN_REPORT
 
 
-  echo "## Foreman logs (error)"																		| tee -a $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
+  echo "## Foreman logs (error)"																						| tee -a $FOREMAN_REPORT
+  echo 																																			>> $FOREMAN_REPORT
 
-  echo "// total number of errors found on production.log"					>> $FOREMAN_REPORT
-  echo "grep "\[E" $base_foreman/foreman/production.log | wc -l"		>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  grep "\[E" $base_foreman/foreman/production.log | wc -l						&>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
-
-
+  echo "// total number of errors found on production.log"									>> $FOREMAN_REPORT
+  echo "grep "\[E" $base_foreman/var/log/foreman/production.log | wc -l"		>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  grep "\[E" $base_foreman/var/log/foreman/production.log | wc -l						&>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  echo 																																			>> $FOREMAN_REPORT
 
 
-  echo "// errors from production.log (combined)"																																	>> $FOREMAN_REPORT
-  echo "grep "\[E" $base_foreman/foreman/production.log | awk '{print $3, $4, $5}' | sort | uniq -c | sort -nr"		>> $FOREMAN_REPORT
-  echo "---"																																																			>> $FOREMAN_REPORT
-  grep "\[E" $base_foreman/foreman/production.log | awk '{print $3, $4, $5}' | sort | uniq -c | sort -nr					&>> $FOREMAN_REPORT
-  echo "---"																																																			>> $FOREMAN_REPORT
-  echo 																																																						>> $FOREMAN_REPORT
+
+
+  echo "// errors from production.log (combined)"																																								>> $FOREMAN_REPORT
+  echo "grep \"\[E\" $base_foreman/var/log/foreman/production.log | awk '{print \$3, \$4, \$5}' | sort | uniq -c | sort -nr"		>> $FOREMAN_REPORT
+  echo "---"																																																										>> $FOREMAN_REPORT
+  grep "\[E" $base_foreman/var/log/foreman/production.log | awk '{print $3, $4, $5}' | sort | uniq -c | sort -nr								&>> $FOREMAN_REPORT
+  echo "---"																																																										>> $FOREMAN_REPORT
+  echo 																																																													>> $FOREMAN_REPORT
 
 
 
@@ -318,101 +355,139 @@ report()
   echo 																											>> $FOREMAN_REPORT
 
   echo "// last 20 entries from foreman/cron.log"						>> $FOREMAN_REPORT
-  echo "tail -20 $base_foreman/foreman/cron.log"						>> $FOREMAN_REPORT
+  echo "tail -20 $base_foreman/var/log/foreman/cron.log"		>> $FOREMAN_REPORT
   echo "---"																								>> $FOREMAN_REPORT
-  tail -20 $base_foreman/foreman/cron.log										&>> $FOREMAN_REPORT
+  tail -20 $base_foreman/var/log/foreman/cron.log						&>> $FOREMAN_REPORT
   echo "---"																								>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
 
-  echo "## HTTPD"																																										| tee -a $FOREMAN_REPORT
+  echo "## Httpd"																																										| tee -a $FOREMAN_REPORT
   echo 																																															>> $FOREMAN_REPORT
 
   echo "// queues on error_log means the # of requests crossed the border. Satellite inaccessible"	>> $FOREMAN_REPORT
-  echo "grep queue $base_foreman/httpd/error_log | wc -l"																						>> $FOREMAN_REPORT
+  echo "grep queue $base_foreman/var/log/httpd/error_log | wc -l"																		>> $FOREMAN_REPORT
   echo "---"																																												>> $FOREMAN_REPORT
-  grep queue $base_foreman/httpd/error_log | wc -l																									&>> $FOREMAN_REPORT
-  echo "---"																																												>> $FOREMAN_REPORT
-  echo 																																															>> $FOREMAN_REPORT
-
-  echo "// when finding something on last step, we will here per date"															>> $FOREMAN_REPORT
-  echo "grep queue $base_foreman/httpd/error_log  | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c"	>> $FOREMAN_REPORT
-  echo "---"																																												>> $FOREMAN_REPORT
-  grep queue $base_foreman/httpd/error_log  | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c				&>> $FOREMAN_REPORT
+  grep queue $base_foreman/var/log/httpd/error_log | wc -l																					&>> $FOREMAN_REPORT
   echo "---"																																												>> $FOREMAN_REPORT
   echo 																																															>> $FOREMAN_REPORT
 
-  echo "// TOP 20 of ip address requesting the satellite via https"																											>> $FOREMAN_REPORT
-  echo "cat $base_foreman/httpd/foreman-ssl_access_ssl.log | awk '{print \$1}' | sort | uniq -c | sort -nr | head -n20"	>> $FOREMAN_REPORT
+  echo "// when finding something on last step, we will here per date"																			>> $FOREMAN_REPORT
+  echo "grep queue $base_foreman/var/log/httpd/error_log  | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c"	>> $FOREMAN_REPORT
+  echo "---"																																																>> $FOREMAN_REPORT
+  grep queue $base_foreman/var/log/httpd/error_log  | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c				&>> $FOREMAN_REPORT
+  echo "---"																																																>> $FOREMAN_REPORT
+  echo 																																																			>> $FOREMAN_REPORT
+
+  echo "// TOP 20 of ip address requesting the satellite via https"																															>> $FOREMAN_REPORT
+  echo "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$1}' | sort | uniq -c | sort -nr | head -n20"	>> $FOREMAN_REPORT
+  echo "---"																																																										>> $FOREMAN_REPORT
+  cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20					&>> $FOREMAN_REPORT
+  echo "---"																																																										>> $FOREMAN_REPORT
+  echo 																																																													>> $FOREMAN_REPORT
+
+  echo "// TOP 20 of ip address requesting the satellite via https (detailed)"																																	>> $FOREMAN_REPORT
+  echo "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$1,\$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20"	>> $FOREMAN_REPORT
+  echo "---"																																																																		>> $FOREMAN_REPORT
+  cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20						&>> $FOREMAN_REPORT
+  echo "---"																																																																		>> $FOREMAN_REPORT
+  echo 																																																																					>> $FOREMAN_REPORT
+
+
+  echo "## RHSM"																				| tee -a $FOREMAN_REPORT
+  echo 																									>> $FOREMAN_REPORT
+
+  echo "// RHSM errors"																	>> $FOREMAN_REPORT
+  echo "grep ERROR $base_dir/var/log/rhsm/rhsm.log"			>> $FOREMAN_REPORT
+  echo "---"																						>> $FOREMAN_REPORT
+  grep ERROR $base_dir/var/log/rhsm/rhsm.log						&>> $FOREMAN_REPORT
+  echo "---"																						>> $FOREMAN_REPORT
+  echo 																									>> $FOREMAN_REPORT
+
+  echo "// RHSM Warnings"																>> $FOREMAN_REPORT
+  echo "grep WARNING $base_dir/var/log/rhsm/rhsm.log"		>> $FOREMAN_REPORT
+  echo "---"																						>> $FOREMAN_REPORT
+  grep WARNING $base_dir/var/log/rhsm/rhsm.log					&>> $FOREMAN_REPORT
+  echo "---"																						>> $FOREMAN_REPORT
+  echo 																									>> $FOREMAN_REPORT
+
+  echo "// Sending updated Host-to-guest"																					>> $FOREMAN_REPORT
+  echo "grep \"Sending updated Host-to-guest\" $base_dir/var/log/rhsm/rhsm.log"		>> $FOREMAN_REPORT
+  echo "---"																																			>> $FOREMAN_REPORT
+  grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log						&>> $FOREMAN_REPORT
+  echo "---"																																			>> $FOREMAN_REPORT
+  echo 																																						>> $FOREMAN_REPORT
+
+
+
+
+  echo "## Virt-who"														| tee -a $FOREMAN_REPORT
+  echo 																					>> $FOREMAN_REPORT
+
+  echo "// virt-who configuration"							>> $FOREMAN_REPORT
+  echo "ls -l $base_dir/etc/virt-who.d"					>> $FOREMAN_REPORT
+  echo "---"																		>> $FOREMAN_REPORT
+  ls -l $base_dir/etc/virt-who.d								&>> $FOREMAN_REPORT
+  echo "---"																		>> $FOREMAN_REPORT
+  echo 																					>> $FOREMAN_REPORT
+
+  echo "// virt-who configuration content files"																																				>> $FOREMAN_REPORT
+  echo "for b in \$(ls -1 \$base_dir/etc/virt-who.d/*); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"		>> $FOREMAN_REPORT
   echo "---"																																																						>> $FOREMAN_REPORT
-  cat $base_foreman/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20					&>> $FOREMAN_REPORT
+  for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done									&>> $FOREMAN_REPORT
   echo "---"																																																						>> $FOREMAN_REPORT
   echo 																																																									>> $FOREMAN_REPORT
-
-  echo "// TOP 20 of ip address requesting the satellite via https (detailed)"																													>> $FOREMAN_REPORT
-  echo "cat $base_foreman/httpd/foreman-ssl_access_ssl.log | awk '{print \$1,\$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20"	>> $FOREMAN_REPORT
-  echo "---"																																																														>> $FOREMAN_REPORT
-  cat $base_foreman/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20						&>> $FOREMAN_REPORT
-  echo "---"																																																														>> $FOREMAN_REPORT
-  echo 																																																																	>> $FOREMAN_REPORT
-
-
-#  echo "## RHSM"										| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-#$ cat rhsm/rhsm.log  | grep "\"name\"" | sort | uniq -c | sort -nr | wc -l
-#  echo "cat $base_dir/"	| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
-#  cat $base_dir/		| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
-#  echo 															>> $FOREMAN_REPORT
-
-
-
-#  echo "## virt-who"										| tee -a $FOREMAN_REPORT
-#$ ll ../../../../../etc/virt-who.d/
-#total 12
-#-rwxrwx---+ 1 yank yank 1254 Sep 12 18:04 template.conf
-#-rwxrwx---+ 1 yank yank  386 Feb  6 06:35 virt-who-config-3.conf
-#-rwxrwx---+ 1 yank yank  388 Feb  6 08:25 virt-who-config-4.conf
-
-
-#$ cat ../../../../../etc/virt-who.d/*.conf
 
 
   echo "## Hypervisors tasks"																																														| tee -a $FOREMAN_REPORT
   echo 																																																									>> $FOREMAN_REPORT
 
   echo "// latest 30 hypervisors tasks"																																									>> $FOREMAN_REPORT
-  echo "cat $base_foreman/../../foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30"	>> $FOREMAN_REPORT
+  echo "cat $base_foreman/foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30"				>> $FOREMAN_REPORT
   echo "---"																																																						>> $FOREMAN_REPORT
-  cat $base_foreman/../../foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30				&>> $FOREMAN_REPORT
+  cat $base_foreman/foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30							&>> $FOREMAN_REPORT
   echo "---"																																																						>> $FOREMAN_REPORT
   echo 																																																									>> $FOREMAN_REPORT
 
 
-#  echo "## Tomcat"										| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-#$ ls -ltr tomcat/
-#  echo "cat $base_dir/"	| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
-#  cat $base_dir/		| tee -a $FOREMAN_REPORT
-#  echo "---"											| tee -a $FOREMAN_REPORT
-#  echo 															>> $FOREMAN_REPORT
-
-
-  echo "## Candlepin"																							| tee -a $FOREMAN_REPORT
+  echo "## Tomcat"																							| tee -a $FOREMAN_REPORT
   echo 																														>> $FOREMAN_REPORT
 
-  echo "// latest state of candlepin (updating info)"							>> $FOREMAN_REPORT
-  echo "grep -B1 Updated $base_foreman/candlepin/candlepin.log"		>> $FOREMAN_REPORT
+  echo "// Memory (Xms and Xmx)"																	>> $FOREMAN_REPORT
+  echo "grep tomcat $base_foreman/ps-awfux"												>> $FOREMAN_REPORT
   echo "---"																											>> $FOREMAN_REPORT
-  grep -B1 Updated $base_foreman/candlepin/candlepin.log					&>> $FOREMAN_REPORT
+  grep tomcat $base_foreman/ps-awfux															&>> $FOREMAN_REPORT
+  echo "---"																											>> $FOREMAN_REPORT
+  echo 																														>> $FOREMAN_REPORT
+
+  echo "// cpdb"																									>> $FOREMAN_REPORT
+  echo "cat $base_foreman/var/log/candlepin/cpdb.log"							>> $FOREMAN_REPORT
+  echo "---"																											>> $FOREMAN_REPORT
+  cat $base_foreman/var/log/candlepin/cpdb.log										&>> $FOREMAN_REPORT
   echo "---"																											>> $FOREMAN_REPORT
   echo 																														>> $FOREMAN_REPORT
 
 
+  echo "## Candlepin"																											| tee -a $FOREMAN_REPORT
+  echo 																																		>> $FOREMAN_REPORT
 
-  echo "## CRON"																						| tee -a $FOREMAN_REPORT
+  echo "// latest state of candlepin (updating info)"											>> $FOREMAN_REPORT
+  echo "grep -B1 Updated $base_foreman/var/log/candlepin/candlepin.log"		>> $FOREMAN_REPORT
+  echo "---"																															>> $FOREMAN_REPORT
+  grep -B1 Updated $base_foreman/var/log/candlepin/candlepin.log					&>> $FOREMAN_REPORT
+  echo "---"																															>> $FOREMAN_REPORT
+  echo 																																		>> $FOREMAN_REPORT
+
+  echo "// latest entry on error.log"																			>> $FOREMAN_REPORT
+  echo "tail -30 $base_foreman/var/log/candlepin/error.log"								>> $FOREMAN_REPORT
+  echo "---"																															>> $FOREMAN_REPORT
+  tail -30 $base_foreman/var/log/candlepin/error.log											&>> $FOREMAN_REPORT
+  echo "---"																															>> $FOREMAN_REPORT
+  echo 																																		>> $FOREMAN_REPORT
+
+
+
+  echo "## Cron"																						| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
   echo "// cron from the base OS"														>> $FOREMAN_REPORT
@@ -422,15 +497,15 @@ report()
   echo "---"																								>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
-  echo "// checking the content of base OS cron"						>> $FOREMAN_REPORT
-  echo "cat $base_dir/var/spool/cron/*"											>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  cat $base_dir/var/spool/cron/*														&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+  echo "// checking the content of base OS cron"																																				>> $FOREMAN_REPORT
+  echo "for b in \$(ls -1 $base_dir/var/spool/cron/*); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"		>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  for b in $(ls -1 $base_dir/var/spool/cron/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done									&>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  echo 																																																									>> $FOREMAN_REPORT
 
 
-  echo "## etc/cron*"																				| tee -a $FOREMAN_REPORT
+  echo "## Files in etc/cron*"															| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
   echo "// all files located on /etc/cron*"									>> $FOREMAN_REPORT
@@ -442,16 +517,16 @@ report()
 
 
 #  echo "## Audit"										| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+#  echo 																											>> $FOREMAN_REPORT
 #$ cat var/log/audit/audit.log
 
   echo "## Foreman Settings"																| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
   echo "// foreman settings"																>> $FOREMAN_REPORT
-  echo "cat $base_foreman/../../etc/foreman/settings.yaml"	>> $FOREMAN_REPORT
+  echo "cat $base_foreman/etc/foreman/settings.yaml"				>> $FOREMAN_REPORT
   echo "---"																								>> $FOREMAN_REPORT
-  cat $base_foreman/../../etc/foreman/settings.yaml					&>> $FOREMAN_REPORT
+  cat $base_foreman/etc/foreman/settings.yaml								&>> $FOREMAN_REPORT
   echo "---"																								>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
