@@ -1,0 +1,125 @@
+base_dir=$sos_path
+base_dir=$1
+base_foreman="$1/sos_commands/foreman/foreman-debug/"
+
+## Naming Resolution"
+cat $base_dir/etc/hosts
+cat $base_dir/etc/resolv.conf
+
+## Network Information"
+cat $base_dir/ip_addr
+cat $base_dir/route
+
+## Selinux"
+cat $base_dir/etc/selinux/config
+
+## Installed Packages (satellite)"
+grep satellite $base_dir/installed-rpms 
+cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat"
+
+## Subscriptions"
+cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity
+cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed
+cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--consumed
+
+## Repos"
+cat $base_dir/sos_commands/yum/yum_-C_repolist
+cat $base_dir/sos_commands/yum/yum_history
+cat $base_dir/var/log/yum.log
+
+## Upgrade"
+grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log| wc -l
+grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log
+tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log
+
+## Disk"
+cat $base_dir/df
+cat $base_dir/sos_commands/foreman/foreman-debug/disk_space_output
+
+## Memory"
+cat $base_dir/free
+cat $base_dir/ps | sort -nrk6 | head -n5
+cat $base_foreman/ps-awfux | sort -nr | awk '{print $1, $6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[$1] += $2} END{for (i in a) print i, a[i]}' | sort -nrk2
+
+## CPU"
+cat $base_dir/proc/cpuinfo | grep processor | wc -l
+
+## Messages"
+grep ERROR $base_dir/var/log/messages
+
+## Foreman Tasks"
+cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l
+
+## Hammer Ping"
+cat $base_dir/sos_commands/foreman/foreman-debug/hammer-ping
+
+## Katello service status"
+cat $base_dir/sos_commands/foreman/foreman-debug/katello_service_status  
+
+## MongoDB Storage"
+cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space
+
+## PostgreSQL Storage"
+cat $base_dir/sos_commands/foreman/foreman-debug/postgres_disk_space
+
+## Passenger"
+cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool
+
+## Qpidd"
+cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | wc -l
+cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1     1$" | wc -l
+
+## Foreman logs (error)"
+grep "\[E" $base_foreman/var/log/foreman/production.log | wc -l
+grep "\[E" $base_foreman/var/log/foreman/production.log | awk '{print $3, $4, $5}' | sort | uniq -c | sort -nr
+
+## Foreman cron"
+tail -20 $base_foreman/var/log/foreman/cron.log
+
+## Httpd"
+grep queue $base_foreman/var/log/httpd/error_log | wc -l
+grep queue $base_foreman/var/log/httpd/error_log  | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c
+cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20
+cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20
+
+## RHSM"
+grep ERROR $base_dir/var/log/rhsm/rhsm.log
+grep WARNING $base_dir/var/log/rhsm/rhsm.log
+grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
+
+## Virt-who"
+ls -l $base_dir/etc/virt-who.d
+for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done
+for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat -vet $b; echo "==="; done
+
+## Hypervisors tasks"
+cat $base_foreman/foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30
+
+## Tomcat"
+grep tomcat $base_foreman/ps-awfux
+cat $base_foreman/var/log/candlepin/cpdb.log
+
+## Candlepin"
+grep -B1 Updated $base_foreman/var/log/candlepin/candlepin.log
+tail -30 $base_foreman/var/log/candlepin/error.log
+
+## Cron"
+ls -l $base_dir/var/spool/cron/*
+for b in $(ls -1 $base_dir/var/spool/cron/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done
+
+## Files in etc/cron*"
+find $base_dir/etc/cron*
+#  echo "## Audit"
+
+## Foreman Settings"
+cat $base_foreman/etc/foreman/settings.yaml
+cat $base_foreman/etc/foreman-installer/custom-hiera.yaml
+
+## PostgreSQL"
+grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l
+grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log
+grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l
+grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log
+cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\t\t".*# | sort
+
+## Please check out the file /tmp/report-$final_name.log"
