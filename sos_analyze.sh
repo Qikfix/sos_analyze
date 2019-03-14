@@ -283,7 +283,7 @@ report()
   echo 																																										>> $FOREMAN_REPORT
 
 
-  echo "## MongoDB"																																				| tee -a $FOREMAN_REPORT
+  echo "## MongoDB Storage"																																| tee -a $FOREMAN_REPORT
   echo 																																										>> $FOREMAN_REPORT
 
   echo "// mongodb storage consumption"																										>> $FOREMAN_REPORT
@@ -294,7 +294,7 @@ report()
   echo 																																										>> $FOREMAN_REPORT
 
 
-  echo "## PostgreSQL"																																		| tee -a $FOREMAN_REPORT
+  echo "## PostgreSQL Storage"																														| tee -a $FOREMAN_REPORT
   echo 																																										>> $FOREMAN_REPORT
 
   echo "// postgres storage consumption"																									>> $FOREMAN_REPORT
@@ -548,6 +548,50 @@ report()
   cat $base_foreman/etc/foreman-installer/custom-hiera.yaml						&>> $FOREMAN_REPORT
   echo "---"																													>> $FOREMAN_REPORT
   echo 																																>> $FOREMAN_REPORT
+
+
+  echo "## PostgreSQL"																															| tee -a $FOREMAN_REPORT
+  echo 																																							>> $FOREMAN_REPORT
+
+  echo "// Deadlock count"																													>> $FOREMAN_REPORT
+  echo "grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"			>> $FOREMAN_REPORT
+  echo "---"																																				>> $FOREMAN_REPORT
+  grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l						&>> $FOREMAN_REPORT
+  echo "---"																																				>> $FOREMAN_REPORT
+  echo 																																							>> $FOREMAN_REPORT
+
+  echo "// Deadlock"																												>> $FOREMAN_REPORT
+  echo "grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"			>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log						&>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  echo 																																			>> $FOREMAN_REPORT
+
+  echo "// ERROR count"																											>> $FOREMAN_REPORT
+  echo "grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"		>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l					&>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  echo 																																			>> $FOREMAN_REPORT
+
+  echo "// ERROR"																											>> $FOREMAN_REPORT
+  echo "grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"			>> $FOREMAN_REPORT
+  echo "---"																													>> $FOREMAN_REPORT
+  grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log						&>> $FOREMAN_REPORT
+  echo "---"																													>> $FOREMAN_REPORT
+  echo 																																>> $FOREMAN_REPORT
+
+
+
+
+  echo "// Current Configuration"																																												>> $FOREMAN_REPORT
+  echo "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\\t\\t".*# | sort"	>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\t\t".*# | sort					&>> $FOREMAN_REPORT
+  echo "---"																																																						>> $FOREMAN_REPORT
+  echo 																																																									>> $FOREMAN_REPORT
+
+
 
 
 
