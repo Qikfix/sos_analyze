@@ -24,31 +24,36 @@ $ ./sos_analyze.sh sosreport-sat64test-123456-2019-03-07-obvjctv
 The sosreport is: sosreport-sat64test-123456-2019-03-07-obvjctv
 ### Welcome to Report ###
 ### CEE/SysMGMT ###
-## naming resolution
-## network information
-## installed packages (satellite)
+## Naming Resolution
+## Network Information
+## Selinux
+## Installed Packages (satellite)
 ## Subscriptions
-## REPOS
+## Repos
 ## Upgrade
 ## Disk
 ## Memory
 ## CPU
+## Messages
 ## Foreman Tasks
 ## Hammer Ping
 ## Katello service status
-## MongoDB
-## PostgreSQL
+## MongoDB Storage
+## PostgreSQL Storage
 ## Passenger
-## QPIDD
+## Qpidd
 ## Foreman logs (error)
 ## Foreman cron
-## HTTPD
+## Httpd
+## RHSM
+## Virt-who
 ## Hypervisors tasks
+## Tomcat
 ## Candlepin
-## CRON
-## etc/cron*
+## Cron
+## Files in etc/cron*
 ## Foreman Settings
-
+## PostgreSQL
 
 ## Please check out the file /tmp/report-sosreport-sat64test-123456-2019-03-07-obvjctv.log
 ```
