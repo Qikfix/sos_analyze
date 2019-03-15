@@ -594,6 +594,21 @@ report()
 
 
 
+## TODO
+
+# cat apache/rpm_-V_httpd 
+# cat foreman/rpm_-V_foreman-debug 
+# cat krb5/rpm_-V_krb5-libs 
+# cat ldap/rpm_-V_openldap 
+# cat postgresql/rpm_-V_postgresql 
+# cat qpid/rpm_-V_qpid-cpp-server_qpid-tools 
+# cat qpid_dispatch/rpm_-V_qpid-dispatch-router 
+# cat tomcat/rpm_-V_tomcat 
+# cat virtwho/rpm_-V_virt-who 
+
+
+
+
 
 
   mv $FOREMAN_REPORT /tmp/report-$final_name.log
