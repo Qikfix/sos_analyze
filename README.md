@@ -62,4 +62,10 @@ The sosreport is: sosreport-sat64test-123456-2019-03-07-obvjctv
 $ less /tmp/report-sosreport-sat64test-123456-2019-03-07-obvjctv.log
 ```
 
+
+Note. You will see the file as below. The content is all the commands executed by this script.
+```
+internals_help/executed_commands.txt
+```
+
 Hope you enjoy it.

@@ -97,12 +97,12 @@ report()
   echo "---"																								>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
-  echo "// packags provided by 3rd party vendors"																				>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v \"Red Hat\""	>> $FOREMAN_REPORT
-  echo "---"																																						>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat"						&>> $FOREMAN_REPORT
-  echo "---"																																						>> $FOREMAN_REPORT
-  echo 																																									>> $FOREMAN_REPORT
+  echo "// packags provided by 3rd party vendors"																										>> $FOREMAN_REPORT
+  echo "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v \"Red Hat\" | sort -k2"		>> $FOREMAN_REPORT
+  echo "---"																																												>> $FOREMAN_REPORT
+  cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat" | sort -k2						&>> $FOREMAN_REPORT
+  echo "---"																																												>> $FOREMAN_REPORT
+  echo 																																															>> $FOREMAN_REPORT
 
 
   echo "## Subscriptions"																																| tee -a $FOREMAN_REPORT
@@ -489,6 +489,20 @@ report()
   grep -B1 Updated $base_foreman/var/log/candlepin/candlepin.log					&>> $FOREMAN_REPORT
   echo "---"																															>> $FOREMAN_REPORT
   echo 																																		>> $FOREMAN_REPORT
+
+  echo "// ERROR on candlepin log - candlepin.log"																								>> $FOREMAN_REPORT
+  echo "grep ERROR $base_foreman/var/log/candlepin/candlepin.log | cut -d ' ' -f1,3- | uniq -c"		>> $FOREMAN_REPORT
+  echo "---"																																											>> $FOREMAN_REPORT
+  grep ERROR $base_foreman/var/log/candlepin/candlepin.log | cut -d ' ' -f1,3- | uniq -c					&>> $FOREMAN_REPORT
+  echo "---"																																											>> $FOREMAN_REPORT
+  echo 																																														>> $FOREMAN_REPORT
+
+  echo "// ERROR on candlepin log - error.log"																										>> $FOREMAN_REPORT
+  echo "grep ERROR $base_foreman/var/log/candlepin/error.log | cut -d ' ' -f1,3- | uniq -c"				>> $FOREMAN_REPORT
+  echo "---"																																											>> $FOREMAN_REPORT
+  grep ERROR $base_foreman/var/log/candlepin/error.log | cut -d ' ' -f1,3- | uniq -c							&>> $FOREMAN_REPORT
+  echo "---"																																											>> $FOREMAN_REPORT
+  echo 																																														>> $FOREMAN_REPORT
 
   echo "// latest entry on error.log"																			>> $FOREMAN_REPORT
   echo "tail -30 $base_foreman/var/log/candlepin/error.log"								>> $FOREMAN_REPORT

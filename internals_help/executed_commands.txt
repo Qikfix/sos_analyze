@@ -15,7 +15,7 @@ cat $base_dir/etc/selinux/config
 
 ## Installed Packages (satellite)"
 grep satellite $base_dir/installed-rpms 
-cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat"
+cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat" | sort -k2
 
 ## Subscriptions"
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity
@@ -101,6 +101,8 @@ cat $base_foreman/var/log/candlepin/cpdb.log
 
 ## Candlepin"
 grep -B1 Updated $base_foreman/var/log/candlepin/candlepin.log
+grep ERROR $base_foreman/var/log/candlepin/candlepin.log | cut -d ' ' -f1,3- | uniq -c
+grep ERROR $base_foreman/var/log/candlepin/error.log | cut -d ' ' -f1,3- | uniq -c
 tail -30 $base_foreman/var/log/candlepin/error.log
 
 ## Cron"
