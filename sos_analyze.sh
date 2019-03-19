@@ -398,6 +398,14 @@ report()
   echo "---"																																																																		>> $FOREMAN_REPORT
   echo 																																																																					>> $FOREMAN_REPORT
 
+  echo "// TOP 50 of uri requesting the satellite via https"																																										>> $FOREMAN_REPORT
+  echo "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1, $6, $7}' | sort | uniq -c | sort -nr | head -n 50"					>> $FOREMAN_REPORT
+  echo "---"																																																																		>> $FOREMAN_REPORT
+  cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1, $6, $7}' | sort | uniq -c | sort -nr | head -n 50								&>> $FOREMAN_REPORT
+  echo "---"																																																																		>> $FOREMAN_REPORT
+  echo 																																																																					>> $FOREMAN_REPORT
+
+
 
   echo "## RHSM"																				| tee -a $FOREMAN_REPORT
   echo 																									>> $FOREMAN_REPORT
