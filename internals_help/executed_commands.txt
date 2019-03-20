@@ -74,7 +74,7 @@ cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent |
 cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1     1$" | wc -l
 
 ## Foreman logs (error)"
-grep "\[E" production.log*  | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr
+grep "\[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr
 grep "\[E" $base_foreman/var/log/foreman/production.log | awk '{print $3, $4, $5}' | sort | uniq -c | sort -nr
 
 ## Foreman cron"
