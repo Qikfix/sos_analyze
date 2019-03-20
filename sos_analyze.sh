@@ -357,12 +357,12 @@ report()
   echo "## Foreman logs (error)"																						| tee -a $FOREMAN_REPORT
   echo 																																			>> $FOREMAN_REPORT
 
-  echo "// total number of errors found on production.log"																																							>> $FOREMAN_REPORT
-  echo "grep \"\[E\" production.log*  | awk '{print \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13}' | sort | uniq -c | sort -nr"	>> $FOREMAN_REPORT
-  echo "---"																																																														>> $FOREMAN_REPORT
-  grep "\[E" production.log*  | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr										&>> $FOREMAN_REPORT
-  echo "---"																																																														>> $FOREMAN_REPORT
-  echo 																																																																	>> $FOREMAN_REPORT
+  echo "// total number of errors found on production.log"																																																						>> $FOREMAN_REPORT
+  echo "grep \"\[E\" $base_foreman/var/log/foreman/production.log* | awk '{print \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13}' | sort | uniq -c | sort -nr"	>> $FOREMAN_REPORT
+  echo "---"																																																																													>> $FOREMAN_REPORT
+  grep "\[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr											&>> $FOREMAN_REPORT
+  echo "---"																																																																													>> $FOREMAN_REPORT
+  echo 																																																																																>> $FOREMAN_REPORT
 
 
 
