@@ -387,16 +387,6 @@ report()
 
 
 
-
-  echo "// errors from production.log (combined)"																																								>> $FOREMAN_REPORT
-  echo "grep \"\[E\" $base_foreman/var/log/foreman/production.log | awk '{print \$3, \$4, \$5}' | sort | uniq -c | sort -nr"		>> $FOREMAN_REPORT
-  echo "---"																																																										>> $FOREMAN_REPORT
-  grep "\[E" $base_foreman/var/log/foreman/production.log | awk '{print $3, $4, $5}' | sort | uniq -c | sort -nr								&>> $FOREMAN_REPORT
-  echo "---"																																																										>> $FOREMAN_REPORT
-  echo 																																																													>> $FOREMAN_REPORT
-
-
-
   echo "## Foreman cron"																		| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
