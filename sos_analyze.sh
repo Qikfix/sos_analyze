@@ -353,9 +353,9 @@ report()
   echo 																																																						>> $FOREMAN_REPORT
 
   echo "// katello_event_queue (foreman-tasks / dynflow is running?)"																														>> $FOREMAN_REPORT
-  echo "grep -E '(  queue|  ===|katello_event_queue)' qpid-stat-q $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"			>> $FOREMAN_REPORT
+  echo "grep -E '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"									>> $FOREMAN_REPORT
   echo "---"																																																										>> $FOREMAN_REPORT
-  grep -E '(  queue|  ===|katello_event_queue)' qpid-stat-q $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q 						&>> $FOREMAN_REPORT
+  grep -E '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q 												&>> $FOREMAN_REPORT
   echo "---"																																																										>> $FOREMAN_REPORT
   echo 																																																													>> $FOREMAN_REPORT
 
