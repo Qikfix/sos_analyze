@@ -224,6 +224,27 @@ report()
   echo "---"																																																																																	>> $FOREMAN_REPORT
   echo 																																																																																				>> $FOREMAN_REPORT
 
+  echo "// Postgres idle process (candlepin)"																																	>> $FOREMAN_REPORT
+  echo "cat \$base_foreman/ps-awfux | grep ^postgres | grep idle$ | grep \"candlepin candlepin\" | wc -l"			>> $FOREMAN_REPORT
+  echo "---"																																																	>> $FOREMAN_REPORT
+  cat $base_foreman/ps-awfux | grep ^postgres | grep idle$ | grep "candlepin candlepin" | wc -l								&>> $FOREMAN_REPORT
+  echo "---"																																																	>> $FOREMAN_REPORT
+  echo 																																																				>> $FOREMAN_REPORT
+
+  echo "// Postgres idle process (foreman)"																																		>> $FOREMAN_REPORT
+  echo "cat \$base_foreman/ps-awfux | grep ^postgres | grep idle$ | grep \"foreman foreman\" | wc -l"					>> $FOREMAN_REPORT
+  echo "---"																																																	>> $FOREMAN_REPORT
+  cat $base_foreman/ps-awfux | grep ^postgres | grep idle$ | grep "foreman foreman" | wc -l										&>> $FOREMAN_REPORT
+  echo "---"																																																	>> $FOREMAN_REPORT
+  echo 																																																				>> $FOREMAN_REPORT
+
+  echo "// Postgres idle process (everything)"																																>> $FOREMAN_REPORT
+  echo "cat \$base_foreman/ps-awfux | grep ^postgres | grep idle$ | wc -l"																		>> $FOREMAN_REPORT
+  echo "---"																																																	>> $FOREMAN_REPORT
+  cat $base_foreman/ps-awfux | grep ^postgres | grep idle$ | wc -l																						&>> $FOREMAN_REPORT
+  echo "---"																																																	>> $FOREMAN_REPORT
+  echo 																																																				>> $FOREMAN_REPORT
+
 
 
   echo "## CPU"																																| tee -a $FOREMAN_REPORT
