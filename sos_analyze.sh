@@ -316,8 +316,28 @@ report()
   echo 																																										>> $FOREMAN_REPORT
 
 
+  echo "## Foreman Tasks"																																					| tee -a $FOREMAN_REPORT
+  echo 																																														>> $FOREMAN_REPORT
+
+  echo "// dynflow running"																																				>> $FOREMAN_REPORT
+  echo "cat $base_dir/sos_commands/foreman/foreman-debug/ps-awfux  | grep dynflow_executor\$"			>> $FOREMAN_REPORT
+  echo "---"																																											>> $FOREMAN_REPORT
+  cat $base_dir/sos_commands/foreman/foreman-debug/ps-awfux  | grep dynflow_executor$		 					&>> $FOREMAN_REPORT
+  echo "---"																																											>> $FOREMAN_REPORT
+  echo 																																														>> $FOREMAN_REPORT
+
+
+
   echo "## Qpidd"																																																	| tee -a $FOREMAN_REPORT
   echo 																																																						>> $FOREMAN_REPORT
+
+  echo "// katello_event_queue (foreman-tasks / dynflow is running?)"																														>> $FOREMAN_REPORT
+  echo "grep -E '(  queue|  ===|katello_event_queue)' qpid-stat-q $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"			>> $FOREMAN_REPORT
+  echo "---"																																																										>> $FOREMAN_REPORT
+  grep -E '(  queue|  ===|katello_event_queue)' qpid-stat-q $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q 						&>> $FOREMAN_REPORT
+  echo "---"																																																										>> $FOREMAN_REPORT
+  echo 																																																													>> $FOREMAN_REPORT
+
 
   echo "// total number of pulp agents"																																						>> $FOREMAN_REPORT
   echo "cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | wc -l"										>> $FOREMAN_REPORT
@@ -337,12 +357,12 @@ report()
   echo "## Foreman logs (error)"																						| tee -a $FOREMAN_REPORT
   echo 																																			>> $FOREMAN_REPORT
 
-  echo "// total number of errors found on production.log"									>> $FOREMAN_REPORT
-  echo "grep "\[E" $base_foreman/var/log/foreman/production.log | wc -l"		>> $FOREMAN_REPORT
-  echo "---"																																>> $FOREMAN_REPORT
-  grep "\[E" $base_foreman/var/log/foreman/production.log | wc -l						&>> $FOREMAN_REPORT
-  echo "---"																																>> $FOREMAN_REPORT
-  echo 																																			>> $FOREMAN_REPORT
+  echo "// total number of errors found on production.log"																																							>> $FOREMAN_REPORT
+  echo "grep \"\[E\" production.log*  | awk '{print \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13}' | sort | uniq -c | sort -nr"	>> $FOREMAN_REPORT
+  echo "---"																																																														>> $FOREMAN_REPORT
+  grep "\[E" production.log*  | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr										&>> $FOREMAN_REPORT
+  echo "---"																																																														>> $FOREMAN_REPORT
+  echo 																																																																	>> $FOREMAN_REPORT
 
 
 
