@@ -638,9 +638,9 @@ report()
 
 
   echo "// Current Configuration"																																												>> $FOREMAN_REPORT
-  echo "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\\t\\t".*# | sort"	>> $FOREMAN_REPORT
+  echo "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\\t\\t".*#"				>> $FOREMAN_REPORT
   echo "---"																																																						>> $FOREMAN_REPORT
-  cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\t\t".*# | sort					&>> $FOREMAN_REPORT
+  cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\t\t".*# 								&>> $FOREMAN_REPORT
   echo "---"																																																						>> $FOREMAN_REPORT
   echo 																																																									>> $FOREMAN_REPORT
 
