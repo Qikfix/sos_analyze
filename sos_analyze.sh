@@ -173,6 +173,14 @@ report()
   echo "---"																																																						>> $FOREMAN_REPORT
   echo 																																																									>> $FOREMAN_REPORT
 
+  echo "// Upgrade Completed? (6.4 or greater)"																																										>> $FOREMAN_REPORT
+  echo "grep \"Upgrade completed\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"	>> $FOREMAN_REPORT
+  echo "---"																																																											>> $FOREMAN_REPORT
+  grep "Upgrade completed" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l						&>> $FOREMAN_REPORT
+  echo "---"																																																											>> $FOREMAN_REPORT
+  echo 																																																														>> $FOREMAN_REPORT
+
+
   echo "// last 20 lines from upgrade log"																															>> $FOREMAN_REPORT
   echo "tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"	>> $FOREMAN_REPORT
   echo "---"																																														>> $FOREMAN_REPORT
@@ -378,12 +386,12 @@ report()
   echo "## Foreman logs (error)"																						| tee -a $FOREMAN_REPORT
   echo 																																			>> $FOREMAN_REPORT
 
-  echo "// total number of errors found on production.log"																																																						>> $FOREMAN_REPORT
-  echo "grep \"\[E\" $base_foreman/var/log/foreman/production.log* | awk '{print \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13}' | sort | uniq -c | sort -nr"	>> $FOREMAN_REPORT
-  echo "---"																																																																													>> $FOREMAN_REPORT
-  grep "\[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr											&>> $FOREMAN_REPORT
-  echo "---"																																																																													>> $FOREMAN_REPORT
-  echo 																																																																																>> $FOREMAN_REPORT
+  echo "// total number of errors found on production.log"																																																							>> $FOREMAN_REPORT
+  echo "grep -h \"\[E\" $base_foreman/var/log/foreman/production.log* | awk '{print \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13}' | sort | uniq -c | sort -nr"	>> $FOREMAN_REPORT
+  echo "---"																																																																														>> $FOREMAN_REPORT
+  grep -h "\[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr										&>> $FOREMAN_REPORT
+  echo "---"																																																																														>> $FOREMAN_REPORT
+  echo 																																																																																	>> $FOREMAN_REPORT
 
 
 
@@ -570,15 +578,15 @@ report()
   echo 																																																									>> $FOREMAN_REPORT
 
 
-  echo "## Files in etc/cron*"															| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+  echo "## Files in etc/cron*"																							| tee -a $FOREMAN_REPORT
+  echo 																																			>> $FOREMAN_REPORT
 
-  echo "// all files located on /etc/cron*"									>> $FOREMAN_REPORT
-  echo "find $base_dir/etc/cron*"														>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  find $base_dir/etc/cron*																	&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+  echo "// all files located on /etc/cron*"																	>> $FOREMAN_REPORT
+  echo "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}'"	>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  find $base_dir/etc/cron* -type f | awk 'FS="/etc/" {print $2}'						&>> $FOREMAN_REPORT
+  echo "---"																																>> $FOREMAN_REPORT
+  echo 																																			>> $FOREMAN_REPORT
 
 
 #  echo "## Audit"										| tee -a $FOREMAN_REPORT
@@ -607,16 +615,16 @@ report()
   echo 																																							>> $FOREMAN_REPORT
 
   echo "// Deadlock count"																													>> $FOREMAN_REPORT
-  echo "grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"			>> $FOREMAN_REPORT
+  echo "grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"	>> $FOREMAN_REPORT
   echo "---"																																				>> $FOREMAN_REPORT
-  grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l						&>> $FOREMAN_REPORT
+  grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l					&>> $FOREMAN_REPORT
   echo "---"																																				>> $FOREMAN_REPORT
   echo 																																							>> $FOREMAN_REPORT
 
   echo "// Deadlock"																												>> $FOREMAN_REPORT
-  echo "grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"			>> $FOREMAN_REPORT
+  echo "grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"	>> $FOREMAN_REPORT
   echo "---"																																>> $FOREMAN_REPORT
-  grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log						&>> $FOREMAN_REPORT
+  grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log					&>> $FOREMAN_REPORT
   echo "---"																																>> $FOREMAN_REPORT
   echo 																																			>> $FOREMAN_REPORT
 
@@ -628,9 +636,9 @@ report()
   echo 																																			>> $FOREMAN_REPORT
 
   echo "// ERROR"																											>> $FOREMAN_REPORT
-  echo "grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"			>> $FOREMAN_REPORT
+  echo "grep -h ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"	>> $FOREMAN_REPORT
   echo "---"																													>> $FOREMAN_REPORT
-  grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log						&>> $FOREMAN_REPORT
+  grep -h ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log					&>> $FOREMAN_REPORT
   echo "---"																													>> $FOREMAN_REPORT
   echo 																																>> $FOREMAN_REPORT
 
