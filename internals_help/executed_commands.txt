@@ -50,6 +50,9 @@ cat $base_dir/proc/cpuinfo | grep processor | wc -l
 ## Messages"
 grep ERROR $base_dir/var/log/messages
 
+## Out of memory"
+grep 'Out of memory' $base_dir/var/log/messages
+
 ## Foreman Tasks"
 cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l
 
