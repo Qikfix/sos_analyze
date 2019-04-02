@@ -277,6 +277,15 @@ report()
   echo 																																				>> $FOREMAN_REPORT
 
 
+  echo "## Out of Memory"																													| tee -a $FOREMAN_REPORT
+  echo 																																				>> $FOREMAN_REPORT
+
+  echo "// out of memory"																							>> $FOREMAN_REPORT
+  echo "grep 'Out of memory' $base_dir/var/log/messages"																>> $FOREMAN_REPORT
+  echo "---"																																	>> $FOREMAN_REPORT
+  grep 'Out of memory' $base_dir/var/log/messages																				&>> $FOREMAN_REPORT
+  echo "---"																																	>> $FOREMAN_REPORT
+  echo 																																				>> $FOREMAN_REPORT
 
 
   echo "## Foreman Tasks"																																	| tee -a $FOREMAN_REPORT
