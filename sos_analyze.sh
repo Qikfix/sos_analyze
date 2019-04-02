@@ -672,10 +672,10 @@ report()
 
 
 
-  mv $FOREMAN_REPORT /tmp/report-$final_name.log
+  mv $FOREMAN_REPORT /tmp/report_${USER}_$final_name.log
   echo 
   echo
-  echo "## Please check out the file /tmp/report-$final_name.log"
+  echo "## Please check out the file /tmp/report_${USER}_$final_name.log"
 }
 
 
