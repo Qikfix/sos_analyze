@@ -26,6 +26,22 @@ main()
   report $base_dir $sub_dir
 }
 
+log_tee()
+{
+  echo $1 | tee -a $FOREMAN_REPORT
+}
+
+log()
+{
+  echo $1 >> $FOREMAN_REPORT
+}
+
+log_cmd()
+{
+  echo $@ | bash &>> $FOREMAN_REPORT
+}
+
+
 report()
 {
 
@@ -34,126 +50,126 @@ report()
 
   base_foreman="$1/sos_commands/foreman/foreman-debug/"
 
-  echo "### Welcome to Report ###"													| tee -a $FOREMAN_REPORT
-  echo "### CEE/SysMGMT ###"																| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+  log_tee "### Welcome to Report ###"
+  log_tee "### CEE/SysMGMT ###"
+  log
+  log
 
-  echo "## Naming Resolution"																| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+  log_tee "## Naming Resolution"
+  log
 
-  echo "// hosts entries"																		>> $FOREMAN_REPORT
-  echo "cat $base_dir/etc/hosts"														>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  cat $base_dir/etc/hosts																		&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+  log "// hosts entries"
+  log "cat $base_dir/etc/hosts"
+  log "---"
+  log_cmd "cat $base_dir/etc/hosts"
+  log "---"
+  log
 
-  echo "// resolv.conf"																			>> $FOREMAN_REPORT
-  echo "cat $base_dir/etc/resolv.conf"											>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  cat $base_dir/etc/resolv.conf															&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-
-
-  echo "## Network Information"															| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-
-  echo "// ip address"																			>> $FOREMAN_REPORT
-  echo "cat $base_dir/ip_addr"															>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  cat $base_dir/ip_addr																			&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-
-  echo "// current route"																		>> $FOREMAN_REPORT
-  echo "cat $base_dir/route"																>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  cat $base_dir/route																				&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-
-  echo "## Selinux"																					| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-
-  echo "// selinux conf"																		>> $FOREMAN_REPORT
-  echo "cat $base_dir/etc/selinux/config"										>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  cat $base_dir/etc/selinux/config													&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
+  log "// resolv.conf"
+  log "cat $base_dir/etc/resolv.conf"
+  log "---"
+  log_cmd "cat $base_dir/etc/resolv.conf"
+  log "---"
+  log
 
 
+  log_tee "## Network Information"
+  log
+
+  log "// ip address"
+  log "cat $base_dir/ip_addr"
+  log "---"
+  log_cmd "cat $base_dir/ip_addr"
+  log "---"
+  log
+
+  log "// current route"
+  log "cat $base_dir/route"
+  log "---"
+  log_cmd "cat $base_dir/route"
+  log "---"
+  log
+
+  log_tee "## Selinux"
+  log
+
+  log "// selinux conf"
+  log "cat $base_dir/etc/selinux/config"
+  log "---"
+  log_cmd "cat $base_dir/etc/selinux/config"
+  log "---"
+  log
 
 
-  echo "## Installed Packages (satellite)"									| tee -a $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-
-  echo "// all installed packages which contain satellite"	>> $FOREMAN_REPORT
-  echo "grep satellite $base_dir/installed-rpms"						>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  grep satellite $base_dir/installed-rpms 									&>> $FOREMAN_REPORT
-  echo "---"																								>> $FOREMAN_REPORT
-  echo 																											>> $FOREMAN_REPORT
-
-  echo "// packags provided by 3rd party vendors"																										>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v \"Red Hat\" | sort -k2"		>> $FOREMAN_REPORT
-  echo "---"																																												>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat" | sort -k2						&>> $FOREMAN_REPORT
-  echo "---"																																												>> $FOREMAN_REPORT
-  echo 																																															>> $FOREMAN_REPORT
 
 
-  echo "## Subscriptions"																																| tee -a $FOREMAN_REPORT
-  echo 																																									>> $FOREMAN_REPORT
+  log_tee "## Installed Packages (satellite)"
+  log
 
-  echo "// subsman identity"																														>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity"	>> $FOREMAN_REPORT
-  echo "---"																																						>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity					&>> $FOREMAN_REPORT
-  echo "---"																																						>> $FOREMAN_REPORT
-  echo 																																									>> $FOREMAN_REPORT
+  log "// all installed packages which contain satellite"
+  log "grep satellite $base_dir/installed-rpms"
+  log "---"
+  log_cmd "grep satellite $base_dir/installed-rpms"
+  log "---"
+  log
 
-  echo "// subsman list installed"																															>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed"	>> $FOREMAN_REPORT
-  echo "---"																																										>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed					&>> $FOREMAN_REPORT
-  echo "---"																																										>> $FOREMAN_REPORT
-  echo 																																													>> $FOREMAN_REPORT
-
-  echo "// subsman list consumed"																																>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--consumed"		>> $FOREMAN_REPORT
-  echo "---"																																										>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--consumed					&>> $FOREMAN_REPORT
-  echo "---"																																										>> $FOREMAN_REPORT
-  echo 																																													>> $FOREMAN_REPORT
+  log "// packags provided by 3rd party vendors"
+  log "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v \"Red Hat\" | sort -k2"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v \"Red Hat\" | sort -k2"
+  log "---"
+  log
 
 
-  echo "## Repos"																										| tee -a $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
+  log_tee "## Subscriptions"
+  log
+
+  log "// subscription identity"
+  log "cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity"
+  log "---"
+  log
+
+  log "// subsman list installed"
+  log "cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed"
+  log "---"
+  log
+
+  log "// subsman list consumed"
+  log "cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--consumed"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--consumed"
+  log "---"
+  log
 
 
-  echo "// enabled repos"																						>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/yum/yum_-C_repolist"							>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/yum/yum_-C_repolist										&>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
+  log_tee "## Repos"
+  log
 
-  echo "// yum history"																							>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/yum/yum_history"									>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/yum/yum_history												&>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
 
-  echo "// yum.log info"																						>> $FOREMAN_REPORT
-  echo "cat $base_dir/var/log/yum.log"															>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  cat $base_dir/var/log/yum.log																			&>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
+  log "// enabled repos"
+  log "cat $base_dir/sos_commands/yum/yum_-C_repolist"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/yum/yum_-C_repolist"
+  log "---"
+  log
+
+  log "// yum history"
+  log "cat $base_dir/sos_commands/yum/yum_history"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/yum/yum_history"
+  log "---"
+  log
+
+  log "// yum.log info"
+  log "cat $base_dir/var/log/yum.log"
+  log "---"
+  log_cmd "cat $base_dir/var/log/yum.log"
+  log "---"
+  log
 
 
   echo "## Upgrade"																																																			| tee -a $FOREMAN_REPORT
