@@ -172,81 +172,80 @@ report()
   log
 
 
-  echo "## Upgrade"																																																			| tee -a $FOREMAN_REPORT
-  echo 																																																									>> $FOREMAN_REPORT
+  log_tee "## Upgrade"
+  log
 
-  echo "// Error on the upgrade file"																																										>> $FOREMAN_REPORT
-  echo "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"	>> $FOREMAN_REPORT
-  echo "---"																																																						>> $FOREMAN_REPORT
-  grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log	| wc -l					&>> $FOREMAN_REPORT
-  echo "---"																																																						>> $FOREMAN_REPORT
-  echo 																																																									>> $FOREMAN_REPORT
+  log "// Error on the upgrade file"
+  log "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
+  log "---"
+  log_cmd "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log	| wc -l"
+  log "---"
+  log
 
-  echo "// Error on the upgrade file (full info)"																																				>> $FOREMAN_REPORT
-  echo "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"					>> $FOREMAN_REPORT
-  echo "---"																																																						>> $FOREMAN_REPORT
-  grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log									&>> $FOREMAN_REPORT
-  echo "---"																																																						>> $FOREMAN_REPORT
-  echo 																																																									>> $FOREMAN_REPORT
+  log "// Error on the upgrade file (full info)"
+  log "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+  log "---"
+  log_cmd "grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+  log "---"
+  log
 
-  echo "// Upgrade Completed? (6.4 or greater)"																																										>> $FOREMAN_REPORT
-  echo "grep \"Upgrade completed\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"	>> $FOREMAN_REPORT
-  echo "---"																																																											>> $FOREMAN_REPORT
-  grep "Upgrade completed" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l						&>> $FOREMAN_REPORT
-  echo "---"																																																											>> $FOREMAN_REPORT
-  echo 																																																														>> $FOREMAN_REPORT
-
-
-  echo "// last 20 lines from upgrade log"																															>> $FOREMAN_REPORT
-  echo "tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"	>> $FOREMAN_REPORT
-  echo "---"																																														>> $FOREMAN_REPORT
-  tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log					&>> $FOREMAN_REPORT
-  echo "---"																																														>> $FOREMAN_REPORT
-  echo 																																																	>> $FOREMAN_REPORT
+  log "// Upgrade Completed? (6.4 or greater)"
+  log "grep \"Upgrade completed\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
+  log "---"
+  log_cmd "grep \"Upgrade completed\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
+  log "---"
+  log
 
 
-  echo "## Disk"																										| tee -a $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
+  log "// last 20 lines from upgrade log"
+  log "tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+  log "---"
+  log_cmd "tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+  log "---"
+  log
 
 
-  echo "// full disk info"																					>> $FOREMAN_REPORT
-  echo "cat $base_dir/df"																						>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  cat $base_dir/df																									&>> $FOREMAN_REPORT
-  echo "---"																												>> $FOREMAN_REPORT
-  echo 																															>> $FOREMAN_REPORT
+  log_tee "## Disk"
+  log
 
-  echo "// disk space output"																									>> $FOREMAN_REPORT
-  echo "cat $base_dir/sos_commands/foreman/foreman-debug/disk_space_output"		>> $FOREMAN_REPORT
-  echo "---"																																	>> $FOREMAN_REPORT
-  cat $base_dir/sos_commands/foreman/foreman-debug/disk_space_output					&>> $FOREMAN_REPORT
-  echo "---"																																	>> $FOREMAN_REPORT
-  echo 																																				>> $FOREMAN_REPORT
+  log "// full disk info"
+  log "cat $base_dir/df"
+  log "---"
+  log_cmd "cat $base_dir/df"
+  log "---"
+  log
+
+  log "// disk space output"
+  log "cat $base_dir/sos_commands/foreman/foreman-debug/disk_space_output"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/disk_space_output"
+  log "---"
+  log
 
 
-  echo "## Memory"																														| tee -a $FOREMAN_REPORT
-  echo 																																				>> $FOREMAN_REPORT
+  log "## Memory"
+  log
 
-  echo "// memory usage"																											>> $FOREMAN_REPORT
-  echo "cat $base_dir/free"																										>> $FOREMAN_REPORT
-  echo "---"																																	>> $FOREMAN_REPORT
-  cat $base_dir/free																													&>> $FOREMAN_REPORT
-  echo "---"																																	>> $FOREMAN_REPORT
-  echo 																																				>> $FOREMAN_REPORT
+  log "// memory usage"
+  log "cat $base_dir/free"
+  log "---"
+  log_cmd "cat $base_dir/free"
+  log "---"
+  log
 
-  echo "// TOP 5 memory consumers"																						>> $FOREMAN_REPORT
-  echo "cat $base_dir/ps | sort -nrk6 | head -n5"															>> $FOREMAN_REPORT
-  echo "---"																																	>> $FOREMAN_REPORT
-  cat $base_dir/ps | sort -nrk6 | head -n5																		&>> $FOREMAN_REPORT
-  echo "---"																																	>> $FOREMAN_REPORT
-  echo 																																				>> $FOREMAN_REPORT
+  log "// TOP 5 memory consumers"
+  log "cat $base_dir/ps | sort -nrk6 | head -n5"
+  log "---"
+  log_cmd "cat $base_dir/ps | sort -nrk6 | head -n5"
+  log "---"
+  log
 
-  echo "// users memory consumers"																																																																						>> $FOREMAN_REPORT
-  echo "cat \$base_foreman/ps-awfux | sort -nr | awk '{print \$1, \$6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"	>> $FOREMAN_REPORT
-  echo "---"																																																																																	>> $FOREMAN_REPORT
-  cat $base_foreman/ps-awfux | sort -nr | awk '{print $1, $6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[$1] += $2} END{for (i in a) print i, a[i]}' | sort -nrk2					&>> $FOREMAN_REPORT
-  echo "---"																																																																																	>> $FOREMAN_REPORT
-  echo 																																																																																				>> $FOREMAN_REPORT
+  log "// users memory consumers"
+  log "cat \$base_foreman/ps-awfux | sort -nr | awk '{print \$1, \$6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
+  log "---"
+  log_cmd "cat $base_foreman/ps-awfux | sort -nr | awk '{print \$1, \$6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
+  log "---"
+  log
 
   echo "// Postgres idle process (candlepin)"																																	>> $FOREMAN_REPORT
   echo "cat \$base_foreman/ps-awfux | grep ^postgres | grep idle$ | grep \"candlepin candlepin\" | wc -l"			>> $FOREMAN_REPORT
