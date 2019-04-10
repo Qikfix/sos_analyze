@@ -1,10 +1,11 @@
 #!/bin/bash
+
+>executed_commands.txt
 cat ../sos_analyze.sh \
-		| grep -E '("## |&>>|base_dir=|base_foreman=)' \
-		| sed -e 's/| tee -a $FOREMAN_REPORT//g' \
-		| sed -e 's/&>> $FOREMAN_REPORT//g' \
-		| sed -e 's/^  echo //g' \
-		| sed -e 's/^  //g' \
-		| sed -e 's/\t//g' \
-		| sed -e 's/^"##/\n##/g' \
-		>executed_commands.txt
+		| grep -E '(log_tee "## |log_cmd )' \
+		| cut -d " " -f4- \
+		| while read line; do echo $line; done >>executed_commands.txt
+
+sed -i 's/^"//g' executed_commands.txt
+sed -i 's/"$//g' executed_commands.txt
+sed -i 's/^##/\n##/g' executed_commands.txt
