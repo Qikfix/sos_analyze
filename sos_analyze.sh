@@ -500,6 +500,13 @@ report()
   log_tee "## Virt-who"
   log
 
+  log "// virt-who default configuration"
+  log "cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$"
+  log "---"
+  log_cmd "cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$"
+  log "---"
+  log
+
   log "// virt-who configuration"
   log "ls -l $base_dir/etc/virt-who.d"
   log "---"
