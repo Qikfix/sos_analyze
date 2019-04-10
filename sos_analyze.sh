@@ -517,14 +517,14 @@ report()
   log "// virt-who configuration content files"
   log "for b in \$(ls -1 \$base_dir/etc/virt-who.d/*); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"
   log "---"
-  log_cmd "for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo \"===\"; cat $b; echo \"===\"; done"
+  log_cmd "for b in \$(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"
   log "---"
   log
 
   log "// virt-who configuration content files (hidden characters)"
   log "for b in \$(ls -1 \$base_dir/etc/virt-who.d/*); do echo; echo \$b; echo \"===\"; cat -vet \$b; echo \"===\"; done"
   log "---"
-  log_cmd "for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo \"===\"; cat -vet $b; echo \"===\"; done"
+  log_cmd "for b in \$(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo \$b; echo \"===\"; cat -vet \$b; echo \"===\"; done"
   log "---"
   log
 
