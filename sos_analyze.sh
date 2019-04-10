@@ -608,7 +608,7 @@ report()
   log "// all files located on /etc/cron*"
   log "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}'"
   log "---"
-  log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print $2}'"
+  log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}'"
   log "---"
   log
 
