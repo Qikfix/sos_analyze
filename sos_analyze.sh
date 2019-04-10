@@ -222,6 +222,14 @@ report()
   log "---"
   log
 
+  log "// no space left on device"
+  log "grep -h -r \"No space left on device\" $base_dir/* 2>/dev/null"
+  log "---"
+  log_cmd "grep -h -r \"No space left on device\" $base_dir/* 2>/dev/null"
+  log "---"
+  log
+
+
 
   log_tee "## Memory"
   log
