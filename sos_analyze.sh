@@ -537,9 +537,9 @@ report()
   log
 
   log "// virt-who server(s)"
-  log "cat \$base_foreman/var/log/httpd/foreman-ssl_access_ssl.log  | awk '{print \$1}' | sort | uniq -c"
+  log "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log  | grep \"cmd=virt-who\" | awk '{print \$1}' | sort | uniq -c"
   log "---"
-  log_cmd "cat \$base_foreman/var/log/httpd/foreman-ssl_access_ssl.log  | awk '{print \$1}' | sort | uniq -c"
+  log_cmd "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log  | grep \"cmd=virt-who\" | awk '{print \$1}' | sort | uniq -c"
   log "---"
   log
 
