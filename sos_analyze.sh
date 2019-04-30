@@ -612,7 +612,7 @@ report()
   log "// checking the content of base OS cron"
   log "for b in \$(ls -1 $base_dir/var/spool/cron/*); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"
   log "---"
-  log_cmd "for b in $(ls -1 $base_dir/var/spool/cron/*); do echo; echo $b; echo \"===\"; cat $b; echo \"===\"; done"
+  log_cmd "for b in $(ls -1 $base_dir/var/spool/cron/*); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"
   log "---"
   log
 

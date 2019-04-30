@@ -33,6 +33,7 @@ tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/
 ## Disk
 cat $base_dir/df
 cat $base_dir/sos_commands/foreman/foreman-debug/disk_space_output
+grep -h -r "No space left on device" $base_dir/* 2>/dev/null
 
 ## Memory
 cat $base_dir/free
@@ -76,7 +77,7 @@ cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent |
 cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1 1$" | wc -l
 
 ## Foreman logs (error)
-grep -h "[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr
+grep -h "[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr | head -n40
 
 ## Foreman cron
 tail -20 $base_foreman/var/log/foreman/cron.log
@@ -94,6 +95,7 @@ grep WARNING $base_dir/var/log/rhsm/rhsm.log
 grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
 
 ## Virt-who
+cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$
 ls -l $base_dir/etc/virt-who.d
 for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done
 for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat -vet $b; echo "==="; done
