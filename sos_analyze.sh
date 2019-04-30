@@ -376,6 +376,13 @@ report()
   log "---"
   log
 
+  log "// URI requests"
+  log "cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_requests | grep uri | sort -k3 | uniq -c"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_requests | grep uri | sort -k3 | uniq -c"
+  log "---"
+  log
+
 
   log_tee "## Foreman Tasks"
   log

@@ -67,6 +67,7 @@ cat $base_dir/sos_commands/foreman/foreman-debug/postgres_disk_space
 
 ## Passenger
 cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool
+cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_requests | grep uri | sort -k3 | uniq -c
 
 ## Foreman Tasks
 cat $base_dir/sos_commands/foreman/foreman-debug/ps-awfux | grep dynflow_executor$
