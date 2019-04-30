@@ -536,6 +536,14 @@ report()
   log "---"
   log
 
+  log "// virt-who server(s)"
+  log "cat \$base_foreman/var/log/httpd/foreman-ssl_access_ssl.log  | awk '{print \$1}' | sort | uniq -c"
+  log "---"
+  log_cmd "cat \$base_foreman/var/log/httpd/foreman-ssl_access_ssl.log  | awk '{print \$1}' | sort | uniq -c"
+  log "---"
+  log
+
+
 
   log_tee "## Hypervisors tasks"
   log
