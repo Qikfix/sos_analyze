@@ -524,6 +524,13 @@ report()
   log_tee "## Virt-who"
   log
 
+  log "// virt-who status"
+  log "cat $base_dir/sos_commands/systemd/systemctl_list-units | grep virt-who"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/systemd/systemctl_list-units | grep virt-who"
+  log "---"
+  log
+
   log "// virt-who default configuration"
   log "cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$"
   log "---"
