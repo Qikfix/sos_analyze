@@ -250,8 +250,17 @@ report()
 
   log "// users memory consumers"
   log "cat \$base_foreman/ps-awfux | sort -nr | awk '{print \$1, \$6}' | grep -v ^USER | grep -v ^COMMAND | grep -v \"^ $\" | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
+  log "and"
+  log "memory_usage=\$(cat $base_foreman/ps-awfux | sort -nr | awk '{print \$6}' | grep -v ^RSS | grep -v ^$ | paste -s -d+ | bc)"
+  log "and"
+  log "memory_usage_gb=\$(echo \"scale=2;$memory_usage/1024/1024\" | bc)"
   log "---"
   log_cmd "cat $base_foreman/ps-awfux | sort -nr | awk '{print \$1, \$6}' | grep -v ^USER | grep -v ^COMMAND | grep -v \"^ $\" | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
+  log
+  memory_usage=$(cat $base_foreman/ps-awfux | sort -nr | awk '{print $6}' | grep -v ^RSS | grep -v ^$ | paste -s -d+ | bc)
+  memory_usage_gb=$(echo "scale=2;$memory_usage/1024/1024" | bc)
+  log "Total Memory Consumed in KiB: $memory_usage"
+  log "Total Memory Consumed in GiB: $memory_usage_gb"
   log "---"
   log
 
