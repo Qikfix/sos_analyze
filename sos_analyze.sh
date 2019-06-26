@@ -321,6 +321,13 @@ report()
   log "---"
   log
 
+  log "// Tasks TOP"
+  log "cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | cut -d, -f3 | grep Actions | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | cut -d, -f3 | grep Actions | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
 
   log_tee "## Hammer Ping"
   log
