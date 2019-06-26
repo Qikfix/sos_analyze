@@ -458,9 +458,9 @@ report()
   log
 
   log "// queues on error_log means the # of requests crossed the border. Satellite inaccessible"
-  log "grep queue $base_foreman/var/log/httpd/error_log | wc -l"
+  log "grep 'Request queue is full' $base_foreman/var/log/httpd/error_log | wc -l"
   log "---"
-  log_cmd "grep queue $base_foreman/var/log/httpd/error_log | wc -l"
+  log_cmd "grep 'Request queue is full' $base_foreman/var/log/httpd/error_log | wc -l"
   log "---"
   log
 
