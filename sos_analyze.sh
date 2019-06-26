@@ -38,7 +38,7 @@ log()
 
 log_cmd()
 {
-  echo $@ | bash &>> $FOREMAN_REPORT
+  echo "$@" | bash &>> $FOREMAN_REPORT
 }
 
 
@@ -415,9 +415,9 @@ report()
   log
 
   log "// total number of (active) pulp agents"
-  log "cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep \"1     1\$\" | wc -l"
+  log "cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep \" 1.*1\$\" | wc -l"
   log "---"
-  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep \"1     1\$\" | wc -l"
+  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep \" 1.*1\$\" | wc -l"
   log "---"
   log
 
