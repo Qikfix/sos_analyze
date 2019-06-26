@@ -54,6 +54,7 @@ grep "Out of memory" $base_dir/var/log/messages
 
 ## Foreman Tasks
 cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l
+cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | cut -d, -f3 | grep Actions | sort | uniq -c | sort -nr
 
 ## Hammer Ping
 cat $base_dir/sos_commands/foreman/foreman-debug/hammer-ping
@@ -75,7 +76,7 @@ cat $base_dir/sos_commands/foreman/foreman-debug/ps-awfux | grep dynflow_executo
 ## Qpidd
 grep -E '( queue| ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q
 cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | wc -l
-cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1 1$" | wc -l
+cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep " 1.*1$" | wc -l
 
 ## Foreman logs (error)
 grep -h "[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr | head -n40
@@ -84,7 +85,7 @@ grep -h "[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5,
 tail -20 $base_foreman/var/log/foreman/cron.log
 
 ## Httpd
-grep queue $base_foreman/var/log/httpd/error_log | wc -l
+grep 'Request queue is full' $base_foreman/var/log/httpd/error_log | wc -l
 grep queue $base_foreman/var/log/httpd/error_log | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20
@@ -96,6 +97,7 @@ grep WARNING $base_dir/var/log/rhsm/rhsm.log
 grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
 
 ## Virt-who
+cat $base_dir/sos_commands/systemd/systemctl_list-units | grep virt-who
 cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$
 ls -l $base_dir/etc/virt-who.d
 for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done
