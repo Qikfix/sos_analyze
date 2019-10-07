@@ -6,6 +6,20 @@
 # Purpose ....: Analyze sosreport and summarize the information (focus on Satellite info)
 #
 
+
+while getopts "c" opt "${NULL[@]}"; do
+ case $opt in
+    c)
+    COPY_TO_CURRENT_DIR=true
+    ;;
+ esac
+done
+shift "$(($OPTIND -1))"
+
+MYPWD=$PWD
+
+
+
 FOREMAN_REPORT="/tmp/$$.log"
 
 main()
@@ -745,9 +759,9 @@ report()
 # cat virtwho/rpm_-V_virt-who 
 
 
-
-
-
+  if [ $COPY_TO_CURRENT_DIR ]; then
+    cp -v $FOREMAN_REPORT $MYPWD/report_${USER}_$final_name.log
+  fi
 
   mv $FOREMAN_REPORT /tmp/report_${USER}_$final_name.log
   echo 
