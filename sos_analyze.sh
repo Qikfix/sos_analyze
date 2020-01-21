@@ -757,6 +757,12 @@ report()
   log "---"
   log
 
+  log "// candlepin storage consumption"
+  log "cat $base_dir/sos_commands/candlepin/du_-sh_.var.lib.candlepin"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/candlepin/du_-sh_.var.lib.candlepin"
+  log "---"
+  log
 
 
   log_tee "## Cron"
