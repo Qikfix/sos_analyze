@@ -619,6 +619,27 @@ report()
   log_tee "## RHSM"
   log
 
+  log "// RHSM Proxy"
+  log "grep proxy $base_dir/etc/rhsm/rhsm.conf | grep -v ^#"
+  log "---"
+  log_cmd "grep proxy $base_dir/etc/rhsm/rhsm.conf | grep -v ^#"
+  log "---"
+  log
+
+  log "// Satellite Proxy"
+  log "grep -E '(^  proxy_url|^  proxy_port|^  proxy_username|^  proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml"
+  log "---"
+  log_cmd "grep -E '(^  proxy_url|^  proxy_port|^  proxy_username|^  proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml"
+  log "---"
+  log
+
+  log "// Virt-who Proxy"
+  log "grep -i proxy $base_dir/etc/sysconfig/virt-who"
+  log "---"
+  log_cmd "grep -i proxy $base_dir/etc/sysconfig/virt-who"
+  log "---"
+  log
+
   log "// RHSM errors"
   log "grep ERROR $base_dir/var/log/rhsm/rhsm.log"
   log "---"

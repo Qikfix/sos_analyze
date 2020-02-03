@@ -121,6 +121,9 @@ cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}'
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1, $6, $7}' | sort | uniq -c | sort -nr | head -n 50
 
 ## RHSM
+grep proxy $base_dir/etc/rhsm/rhsm.conf | grep -v ^#
+grep -E '(^ proxy_url|^ proxy_port|^ proxy_username|^ proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml
+grep -i proxy $base_dir/etc/sysconfig/virt-who
 grep ERROR $base_dir/var/log/rhsm/rhsm.log
 grep WARNING $base_dir/var/log/rhsm/rhsm.log
 grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
@@ -148,6 +151,7 @@ grep -B1 Updated $base_foreman/var/log/candlepin/candlepin.log
 grep ERROR $base_foreman/var/log/candlepin/candlepin.log | cut -d ' ' -f1,3- | uniq -c
 grep ERROR $base_foreman/var/log/candlepin/error.log | cut -d ' ' -f1,3- | uniq -c
 tail -30 $base_foreman/var/log/candlepin/error.log
+cat $base_dir/sos_commands/candlepin/du_-sh_.var.lib.candlepin
 
 ## Cron
 ls -l $base_dir/var/spool/cron/*
