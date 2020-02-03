@@ -188,6 +188,25 @@ report()
   log_tee "## Upgrade"
   log
 
+
+# grep "Running installer with args" /var/log/foreman-installer/satellite.log
+  log "// Flags used with satellite-installer"
+
+  if [ "$sos_version" == "old" ];then
+    cmd="grep \"Running installer with args\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+  else
+    cmd="grep \"Running installer with args\" $base_dir/var/log/foreman-installer/satellite.log"
+  fi
+
+  log "$cmd"
+  log "---"
+  log_cmd "$cmd"
+  log "---"
+  log
+
+
+
+
   log "// Error on the upgrade file"
 
   if [ "$sos_version" == "old" ];then
