@@ -25,6 +25,9 @@ cat $base_dir/sos_commands/yum/yum_history
 cat $base_dir/var/log/yum.log
 
 ## Upgrade
+cmd="grep "Running installer with args" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+cmd="grep "Running installer with args" $base_dir/var/log/foreman-installer/satellite.log"
+
 cmd="grep "^[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
 cmd="grep "^[ERROR" $base_dir/var/log/foreman-installer/satellite.log | wc -l"
 
