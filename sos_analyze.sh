@@ -144,6 +144,21 @@ report()
   log "---"
   log
 
+  log "// installed katello-agent and/or gofer"
+  log "grep -E '(^katello-agent|^gofer)' $base_dir/installed-rpms"
+  log "---"
+  log_cmd "grep -E '(^katello-agent|^gofer)' $base_dir/installed-rpms"
+  log "---"
+  log
+
+  log "// goferd service"
+  log "grep -E '(^katello-agent|^gofer)' $base_dir/installed-rpms"
+  log "cat $base_dir/sos_commands/systemd/systemctl_list-units | grep goferd"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/systemd/systemctl_list-units | grep goferd"
+  log "---"
+  log
+
   log "// subsman list installed"
   log "cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed"
   log "---"

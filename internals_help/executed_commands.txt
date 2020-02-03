@@ -16,6 +16,8 @@ cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat" | so
 
 ## Subscriptions
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity
+grep -E '(^katello-agent|^gofer)' $base_dir/installed-rpms
+cat $base_dir/sos_commands/systemd/systemctl_list-units | grep goferd
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--consumed
 
