@@ -131,6 +131,8 @@ grep -E '(^ proxy_url|^ proxy_port|^ proxy_username|^ proxy_password)' $base_dir
 grep -i proxy $base_dir/etc/sysconfig/virt-who
 grep ERROR $base_dir/var/log/rhsm/rhsm.log
 grep WARNING $base_dir/var/log/rhsm/rhsm.log
+grep "is assigned to 2 different systems" $base_dir/var/log/rhsm/rhsm.log | awk '{print $9}' | sed -e "s/'//g" | sort -u | wc -l
+grep "is assigned to 2 different systems" $base_dir/var/log/rhsm/rhsm.log | awk '{print $9}' | sed -e "s/'//g" | sort -u
 grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
 
 ## Virt-who
