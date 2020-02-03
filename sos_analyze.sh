@@ -688,6 +688,20 @@ report()
   log "---"
   log
 
+  log "// duplicated hypervisors #"
+  log "grep \"is assigned to 2 different systems\" $base_dir/var/log/rhsm/rhsm.log | awk '{print \$9}' | sed -e \"s/'//g\" | sort -u | wc -l"
+  log "---"
+  log_cmd "grep \"is assigned to 2 different systems\" $base_dir/var/log/rhsm/rhsm.log | awk '{print \$9}' | sed -e \"s/'//g\" | sort -u | wc -l"
+  log "---"
+  log
+
+  log "// duplicated hypervisors list"
+  log "grep \"is assigned to 2 different systems\" $base_dir/var/log/rhsm/rhsm.log | awk '{print \$9}' | sed -e \"s/'//g\" | sort -u"
+  log "---"
+  log_cmd "grep \"is assigned to 2 different systems\" $base_dir/var/log/rhsm/rhsm.log | awk '{print \$9}' | sed -e \"s/'//g\" | sort -u"
+  log "---"
+  log
+
   log "// Sending updated Host-to-guest"
   log "grep \"Sending updated Host-to-guest\" $base_dir/var/log/rhsm/rhsm.log"
   log "---"
