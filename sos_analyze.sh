@@ -222,12 +222,12 @@ report()
 
 
 
-  log "// Error on the upgrade file"
+  log "// # of error on the upgrade file"
 
   if [ "$sos_version" == "old" ];then
-    cmd="grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
+    cmd="grep '^\[ERROR' $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
   else
-    cmd="grep \"^\[ERROR\" $base_dir/var/log/foreman-installer/satellite.log | wc -l"
+    cmd="grep '^\[ERROR' $base_dir/var/log/foreman-installer/satellite.log | wc -l"
   fi
 
   log "$cmd"
@@ -240,9 +240,9 @@ report()
   log "// Error on the upgrade file (full info)"
 
   if [ "$sos_version" == "old" ];then
-    cmd="grep \"^\[ERROR\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+    cmd="grep '^\[ERROR' $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
   else
-    cmd="grep \"^\[ERROR\" $base_dir/var/log/foreman-installer/satellite.log"
+    cmd="grep '^\[ERROR' $base_dir/var/log/foreman-installer/satellite.log"
   fi
 
   log "$cmd"
