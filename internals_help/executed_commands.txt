@@ -9,6 +9,7 @@ cat $base_dir/route
 
 ## Selinux
 cat $base_dir/etc/selinux/config
+grep setroubleshoot $base_dir/installed-rpms
 
 ## Installed Packages (satellite)
 grep satellite $base_dir/installed-rpms
