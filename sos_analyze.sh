@@ -113,6 +113,14 @@ report()
   log "---"
   log
 
+  log "// setroubleshoot package"
+  log "grep setroubleshoot $base_dir/installed-rpms"
+  log "---"
+  log_cmd "grep setroubleshoot $base_dir/installed-rpms"
+  log "---"
+  log
+
+
 
 
 
