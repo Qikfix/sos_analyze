@@ -121,9 +121,6 @@ report()
   log
 
 
-
-
-
   log_tee "## Installed Packages (satellite)"
   log
 
@@ -926,7 +923,6 @@ report()
 
 
 
-
   log "// Current Configuration"
   log "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
   log "---"
@@ -934,7 +930,127 @@ report()
   log "---"
   log
 
+  log_tee "## Tuning"
+  log
 
+  log "// prefork.conf configuration"
+  log "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | grep 'ServerLimit\|StartServers'"
+  log "---"
+  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | grep 'ServerLimit\|StartServers'"
+  log "---"
+  log
+
+  log "// 05-foreman.conf configuration"
+  log "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | grep 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log "---"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | grep 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log "---"
+  log
+
+  log "// 05-foreman-ssl.conf configuration"
+  log "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | grep 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log "---"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | grep 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log "---"
+  log
+
+  log "// katello.conf configuration"
+  log "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | grep 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout'"
+  log "---"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | grep 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout'"
+  log "---"
+  log
+
+  log "// passenger.conf configuration - 6.3 or less"
+  log "cat $base_dir/etc/httpd/conf.d/passenger.conf | grep 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log "---"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/passenger.conf | grep 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log "---"
+  log
+
+  log "// passenger-extra.conf configuration - 6.4+"
+  log "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | grep 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log "---"
+  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | grep 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log "---"
+  log
+
+  log "// pulp_workers configuration"
+  log "cat $base_dir/etc/default/pulp_workers | grep '^PULP_MAX_TASKS_PER_CHILD\|^PULP_CONCURRENCY'"
+  log "---"
+  log_cmd "cat $base_dir/etc/default/pulp_workers | grep '^PULP_MAX_TASKS_PER_CHILD\|^PULP_CONCURRENCY'"
+  log "---"
+  log
+
+  log "// foreman-tasks/dynflow configuration - 6.3 or less"
+  log "cat $base_dir/etc/sysconfig/foreman-tasks | grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log "---"
+  log_cmd "cat $base_dir/etc/sysconfig/foreman-tasks | grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log "---"
+  log
+
+  log "// foreman-tasks/dynflow configuration - 6.4+"
+  log "cat $base_dir/etc/sysconfig/dynflowd | grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log "---"
+  log_cmd "cat $base_dir/etc/sysconfig/dynflowd | grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log "---"
+  log
+
+  log "// postgres configuration"
+  log "cat $base_dir/var/lib/pgsql/data/postgresql.conf | grep 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' | grep -v '^#'"
+  log "---"
+  log_cmd "cat $base_dir/var/lib/pgsql/data/postgresql.conf | grep 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' | grep -v '^#'"
+  log "---"
+  log
+
+  log "// tomcat configuration"
+  log "cat $base_dir/etc/tomcat/tomcat.conf | grep 'JAVA_OPTS'"
+  log "---"
+  log_cmd "cat $base_dir/etc/tomcat/tomcat.conf | grep 'JAVA_OPTS'"
+  log "---"
+  log
+
+  log "// qpidd configuration"
+  log "cat $base_dir/etc/qpid/qpidd.conf | grep 'mgmt_pub_interval'"
+  log "---"
+  log_cmd "cat $base_dir/etc/qpid/qpidd.conf | grep 'mgmt_pub_interval'"
+  log "---"
+  log
+
+  log "// httpd|apache limits"
+  log "cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log_cmd "cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log
+
+  log "// qrouterd limits"
+  log "cat $base_dir/etc/systemd/system/qdrouterd.service.d/90-limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log_cmd "cat $base_dir/etc/systemd/system/qdrouterd.service.d/90-limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log
+
+  log "// qpidd limits"
+  log "cat $base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log_cmd "cat $base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log
+
+  log "// smart proxy dynflow core limits"
+  log "cat $base_dir/etc/systemd/system/smart_proxy_dynflow_core.service.d/90-limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log_cmd "cat $base_dir/etc/systemd/system/smart_proxy_dynflow_core.service.d/90-limits.conf | grep 'LimitNOFILE'"
+  log "---"
+  log
+
+  log "// sysctl configuration"
+  log "cat $base_dir/etc/sysctl.conf | grep 'fs.aio-max-nr'"
+  log "---"
+  log_cmd "cat $base_dir/etc/sysctl.conf | grep 'fs.aio-max-nr'"
+  log "---"
+  log
 
 
 ## TODO
