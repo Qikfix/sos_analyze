@@ -178,3 +178,22 @@ grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log
 grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l
 grep -h ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log
 cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\t\t".*#
+
+## Tuning
+cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | grep 'ServerLimit|StartServers'
+cat $base_dir/etc/httpd/conf.modules.d/05-foreman.conf | grep grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
+cat $base_dir/etc/httpd/conf.modules.d/05-foreman-ssl.conf | grep grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
+cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout'
+cat $base_dir/etc/httpd/conf.d/passenger.conf | grep 'MaxPoolSize|PassengerMaxRequestQueueSize'
+cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | grep 'MaxPoolSize|PassengerMaxRequestQueueSize'
+cat $base_dir/etc/default/pulp_workers | grep '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'
+cat $base_dir/etc/sysconfig/foreman-tasks | grep 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'
+cat $base_dir/etc/sysconfig/dynflowd | grep 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'
+cat $base_dir/var/lib/pgsql/data/postgresql.conf | grep 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | grep -v '^#'
+cat $base_dir/etc/tomcat/tomcat.conf | grep 'JAVA_OPTS'
+cat $base_dir/etc/qpid/qpidd.conf | grep 'mgmt_pub_interval'
+cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/systemd/system/qdrouterd.service.d/90-limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/systemd/system/smart_proxy_dynflow_core.service.d/90-limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/sysctl.conf | grep 'fs.aio-max-nr'
