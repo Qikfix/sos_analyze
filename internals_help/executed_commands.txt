@@ -3,6 +3,9 @@
 cat $base_dir/etc/hosts
 cat $base_dir/etc/resolv.conf
 
+## Hardware
+cat $base_dir/dmidecode | grep -E '(Vendor|Manufacture)' | head -n3
+
 ## Network Information
 cat $base_dir/ip_addr
 cat $base_dir/route
@@ -181,8 +184,8 @@ cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ |
 
 ## Tuning
 cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | grep 'ServerLimit|StartServers'
-cat $base_dir/etc/httpd/conf.modules.d/05-foreman.conf | grep grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
-cat $base_dir/etc/httpd/conf.modules.d/05-foreman-ssl.conf | grep grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
+cat $base_dir/etc/httpd/conf.d/05-foreman.conf | grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
+cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
 cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout'
 cat $base_dir/etc/httpd/conf.d/passenger.conf | grep 'MaxPoolSize|PassengerMaxRequestQueueSize'
 cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | grep 'MaxPoolSize|PassengerMaxRequestQueueSize'
