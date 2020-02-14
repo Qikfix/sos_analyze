@@ -85,6 +85,17 @@ report()
   log "---"
   log
 
+  log_tee "## Hardware"
+  log
+
+  log "// baremetal or vm?"
+  log "cat $base_dir/dmidecode | grep -E '(Vendor|Manufacture)' | head -n3"
+  log "---"
+  log_cmd "cat $base_dir/dmidecode | grep -E '(Vendor|Manufacture)' | head -n3"
+  log "---"
+  log
+
+
 
   log_tee "## Network Information"
   log
