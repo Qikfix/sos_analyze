@@ -1068,6 +1068,7 @@ report()
   log "---"
   log_cmd "grep EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
   log "---"
+  log
  
   log "// dynflow executors - 6.4 or greater"
   log "grep EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
