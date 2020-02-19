@@ -200,5 +200,5 @@ cat $base_dir/etc/systemd/system/qdrouterd.service.d/90-limits.conf | grep 'Limi
 cat $base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf | grep 'LimitNOFILE'
 cat $base_dir/etc/systemd/system/smart_proxy_dynflow_core.service.d/90-limits.conf | grep 'LimitNOFILE'
 cat $base_dir/etc/sysctl.conf | grep 'fs.aio-max-nr'
-grep EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks'
-grep EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd'
+grep EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks
+grep EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd
