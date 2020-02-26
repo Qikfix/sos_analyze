@@ -574,12 +574,19 @@ report()
   log_tee "## Qpidd"
   log
 
+  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
+    qpid_filename="qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
+  fi
+  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 ]; then
+    qpid_filename="qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
+  fi
+
   log "// katello_event_queue (foreman-tasks / dynflow is running?)"
 
   if [ "$sos_version" == "old" ];then
     cmd="grep -E '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
   else
-    cmd="grep -E '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
+    cmd="grep -E '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/katello/$qpid_filename"
   fi
 
   log "$cmd"
@@ -594,7 +601,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | wc -l"
   else
-    cmd="cat $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 | grep pulp.agent | wc -l"
+    cmd="cat $base_dir/sos_commands/katello/$qpid_filename | grep pulp.agent | wc -l"
   fi
 
   log "$cmd"
@@ -608,7 +615,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep \" 1.*1\$\" | wc -l"
   else
-    cmd="cat $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 | grep pulp.agent | grep \" 1.*1\$\" | wc -l"
+    cmd="cat $base_dir/sos_commands/katello/$qpid_filename | grep pulp.agent | grep \" 1.*1\$\" | wc -l"
   fi
 
   log "$cmd"
