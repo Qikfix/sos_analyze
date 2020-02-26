@@ -152,8 +152,8 @@ cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep "cmd=virt-who"
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep "cmd=virt-who" | awk '{print $1}' | sort | uniq -c
 
 ## Hypervisors tasks
-cmd="cat $base_foreman/foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30"
-cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | grep Hypervisors | sed -e 's/,/ /g' | sort -rk6 | head -n 30"
+cmd="cat $base_foreman/foreman_tasks_tasks.csv | grep -E '(^ id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d| -f3,4,5,6,7"
+cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | grep -E '(^ id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d| -f3,4,5,6,7"
 
 
 ## Tomcat
