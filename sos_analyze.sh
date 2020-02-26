@@ -803,9 +803,9 @@ report()
   log "// latest 30 hypervisors tasks"
 
   if [ "$sos_version" == "old" ];then
-    cmd="cat $base_foreman/foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30"
+    cmd="cat $base_foreman/foreman_tasks_tasks.csv | grep -E '(^                  id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d\| -f3,4,5,6,7"
   else
-    cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | grep Hypervisors | sed -e 's/,/ /g' | sort -rk6 | head -n 30"
+    cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | grep -E '(^                  id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d\| -f3,4,5,6,7"
   fi
 
   log "$cmd"
