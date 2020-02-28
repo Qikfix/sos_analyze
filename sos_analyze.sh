@@ -42,7 +42,7 @@ log_tee()
 
 log()
 {
-  echo $1 >> $FOREMAN_REPORT
+  echo "$1" >> $FOREMAN_REPORT
 }
 
 log_cmd()
