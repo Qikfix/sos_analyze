@@ -88,6 +88,9 @@ cmd="cat $base_dir/sos_commands/foreman/hammer_ping"
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/katello_service_status"
 cmd="cat $base_dir/sos_commands/foreman/foreman-maintain_service_status"
 
+cmd="grep -E '(^*|Active)' $base_dir/sos_commands/foreman/foreman-debug/katello_service_status | tr '^*' 'n'"
+cmd="grep -E '(^*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '^*' 'n'"
+
 
 ## MongoDB Storage
 cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space

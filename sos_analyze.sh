@@ -498,6 +498,23 @@ report()
   log
 
 
+  log "// katello-service status output - condensed"
+
+  if [ "$sos_version" == "old" ];then
+    cmd="grep -E '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-debug/katello_service_status | tr '^\*' '\n'"
+  else
+    cmd="grep -E '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '^\*' '\n'"
+  fi
+
+  log "$cmd"
+  log "---"
+  log_cmd "$cmd"
+  log "---"
+  log
+
+
+
+
   log_tee "## MongoDB Storage"
   log
   # FIX
