@@ -1,0 +1,93 @@
+General Info
+---
+     37 [FEATURE]
+     19 [FIX]
+     15 [ENHANCEMENT]
+      1 [MAINTENANCE]
+---
+
+
+- [FEATURE]
+  - Thu Mar 12 13:16:00 2020 -0700 | [FEATURE] adding new check for services based on katello-service status
+  - Thu Mar 12 13:15:46 2020 -0700 | [FEATURE] Presenting all the flags used with satellite-installer
+  - Thu Mar 12 13:15:46 2020 -0700 | [FEATURE] dynflow executors check
+  - Thu Mar 12 13:15:46 2020 -0700 | [FEATURE] checking if the machine is baremetal or vm
+  - Thu Mar 12 13:15:43 2020 -0700 | [FEATURE] - Adding Tuning info
+  - Thu Mar 12 13:15:38 2020 -0700 | [FEATURE] - setroubleshoot package check
+  - Thu Mar 12 13:15:33 2020 -0700 | [FEATURE] - Error info during satellite-installer / log files (#56)
+  - Thu Mar 12 13:15:29 2020 -0700 | [FEATURE] - Checking duplicated hypervisors - Fix#51
+  - Thu Mar 12 13:15:24 2020 -0700 | [FEATURE] - Checking for goferd and katello-agent on Satellite server
+  - Thu Mar 12 13:15:08 2020 -0700 | [FEATURE] - satellite-installer used flags
+  - Thu Mar 12 13:15:02 2020 -0700 | [FEATURE] - current proxy configuration (#52)
+  - Thu Mar 12 13:14:54 2020 -0700 | [FEATURE] - Fixes #46 (#47)
+  - Thu Mar 12 13:13:13 2020 -0700 | [FEATURE] - parse updated (#41)
+  - Thu Mar 12 13:12:55 2020 -0700 | [FEATURE] - new sosreport version supportability (#40)
+  - Thu Mar 12 13:12:28 2020 -0700 | [FEATURE] - Fix #27, added a new task report that will help during the troubleshooting
+  - Thu Mar 12 13:12:04 2020 -0700 | [FEATURE] - Fix #24, added virt-who service current status
+  - Thu Mar 12 13:11:53 2020 -0700 | [FEATURE] - Fix: #20, memory utilization sumary
+  - Thu Mar 12 13:11:37 2020 -0700 | [FEATURE] - #17 - uri requests
+  - Thu Mar 12 13:11:26 2020 -0700 | [FEATURE] - 13 virt who sender (#16)
+  - Thu Mar 12 13:11:02 2020 -0700 | [FEATURE] - Storage (#10)
+  - Thu Mar 12 13:10:44 2020 -0700 | [FEATURE] - adding sysconfig/virt-who entry
+  - Thu Mar 12 13:09:56 2020 -0700 | [FEATURE] - new log feature
+  - Thu Mar 12 13:09:52 2020 -0700 | [FEATURE] - new log feature
+  - Thu Mar 12 13:09:43 2020 -0700 | [FEATURE] - Adding feature for grepping Out of Memory at the messages log
+  - Thu Mar 12 13:07:55 2020 -0700 | [FEATURE] - some features added, #1, #2 and #4
+  - Thu Mar 12 13:07:48 2020 -0700 | [FEATURE] - adding analysis to check URL / httpd logs
+  - Thu Mar 12 13:07:32 2020 -0700 | [FEATURE] - readme updated, sos_analyzed improved and new executed_commands updated
+  - Thu Mar 12 13:07:17 2020 -0700 | [FEATURE] - new internals_help to show all the executed commands automatically
+  - Thu Mar 12 13:07:13 2020 -0700 | [FEATURE] - PG added
+  - Thu Mar 12 13:07:09 2020 -0700 | [FEATURE] - custom-hiera added
+  - Thu Mar 12 13:06:59 2020 -0700 | [FEATURE] - hidden characters on virt-who conf files
+  - Thu Mar 12 13:03:26 2020 -0700 | [FEATURE] - code updated, updating the final name
+  - Thu Mar 12 12:59:25 2020 -0700 | [FEATURE] - New features added and code pdated
+  - Thu Feb 27 23:54:07 2020 -0800 | [FEATURE] adding new check for services based on katello-service status
+  - Wed Feb 26 08:03:59 2020 -0800 | [FEATURE] Presenting all the flags used with satellite-installer
+  - Tue Feb 18 11:00:29 2020 -0800 | [FEATURE] dynflow executors check
+  - Fri Feb 14 12:02:46 2020 -0800 | [FEATURE] checking if the machine is baremetal or vm
+
+
+- [FIX]
+  - Thu Mar 12 13:16:00 2020 -0700 | [FIX] skipping dirs and tarballs under virt-who.d dir
+  - Thu Mar 12 13:16:00 2020 -0700 | [FIX] resolving the multiple entries when using "*"
+  - Thu Mar 12 13:15:46 2020 -0700 | [FIX] Fixing the qpid file path
+  - Thu Mar 12 13:15:46 2020 -0700 | [FIX] Tuning dynflowd - fixed typo
+  - Thu Mar 12 13:15:46 2020 -0700 | [FIX] Fixed typo on dynflowd conf file/tuning query
+  - Thu Mar 12 13:14:44 2020 -0700 | [FIX] - missing .client. in qpid file name
+  - Thu Mar 12 13:14:29 2020 -0700 | [FIX] - Fixed issue #43
+  - Thu Mar 12 13:11:41 2020 -0700 | [FIX] - Pulp.agent count fixed (#29)
+  - Thu Mar 12 13:11:16 2020 -0700 | [FIX] - cron log fixed (#15)
+  - Thu Mar 12 13:10:53 2020 -0700 | [FIX] - fixing typo
+  - Thu Mar 12 13:10:35 2020 -0700 | [FIX] - fixing typo
+  - Thu Mar 12 13:10:32 2020 -0700 | [FIX] - fixing typo
+  - Thu Mar 12 13:10:23 2020 -0700 | [FIX] - fixing typo
+  - Thu Mar 12 13:08:13 2020 -0700 | [FIX] - production.log fixed
+  - Fri Feb 28 16:56:16 2020 -0800 | [FIX] skipping dirs and tarballs under virt-who.d dir
+  - Thu Feb 27 16:59:44 2020 -0800 | [FIX] resolving the multiple entries when using "*"
+  - Wed Feb 26 09:13:02 2020 -0800 | [FIX] Fixing the qpid file path
+  - Tue Feb 18 17:39:02 2020 -0800 | [FIX] Tuning dynflowd - fixed typo
+  - Tue Feb 18 17:21:55 2020 -0800 | [FIX] Fixed typo on dynflowd conf file/tuning query
+
+
+- [ENHANCEMENT]
+  - Thu Mar 12 13:15:46 2020 -0700 | [ENHANCEMENT] - fixing the hypervisors task presentation
+  - Thu Mar 12 13:13:26 2020 -0700 | [ENHANCEMENT] - update path for qpid -q for new sosreport version (#42)
+  - Thu Mar 12 13:12:43 2020 -0700 | [ENHANCEMENT] - internals updated
+  - Thu Mar 12 13:12:17 2020 -0700 | [ENHANCEMENT] - Fix #23, query updated to 'Request queue is full' in error.log
+  - Thu Mar 12 13:09:59 2020 -0700 | [ENHANCEMENT] - Code Enhancement
+  - Thu Mar 12 13:09:26 2020 -0700 | [ENHANCEMENT] - adding username name on the summary file
+  - Thu Mar 12 13:09:21 2020 -0700 | [ENHANCEMENT] - adding -h on grep and some new adjustment
+  - Thu Mar 12 13:08:39 2020 -0700 | [ENHANCEMENT] - removing the sort from PG conf collect
+  - Thu Mar 12 13:08:36 2020 -0700 | [ENHANCEMENT] - rfe
+  - Thu Mar 12 13:08:33 2020 -0700 | [ENHANCEMENT] - rfe
+  - Thu Mar 12 13:08:24 2020 -0700 | [ENHANCEMENT] - rfe
+  - Thu Mar 12 13:08:01 2020 -0700 | [ENHANCEMENT] - internals updated
+  - Thu Mar 12 13:07:23 2020 -0700 | [ENHANCEMENT] - readme updated
+  - Thu Mar 12 13:06:34 2020 -0700 | [ENHANCEMENT] - checking the sosreport before proceed
+  - Thu Mar 12 13:05:50 2020 -0700 | [ENHANCEMENT] - enhancement
+
+
+- [MAINTENANCE]
+  - Thu Mar 12 13:20:58 2020 -0700 | [MAINTENANCE] - Merge branch 'master' of github.com:waldirio/sos_analyze
+
+
