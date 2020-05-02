@@ -544,6 +544,15 @@ report()
   log
 
 
+  log "// TOP foreman tables consumption"
+  log "head -n30 $base_dir/sos_commands/katello/db_table_size"
+  log "---"
+  log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size"
+  log "---"
+  log  
+
+
+
   log_tee "## Passenger"
   log
 
