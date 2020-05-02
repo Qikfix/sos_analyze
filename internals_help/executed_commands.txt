@@ -99,6 +99,7 @@ cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/postgres_disk_space"
 cmd="cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
 
+head -n30 $base_dir/sos_commands/katello/db_table_size
 
 ## Passenger
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool"
