@@ -56,12 +56,6 @@ report()
   echo "---"																								>> $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
 
-  log "// hostname"
-  log "cat $base_dir/etc/hostname"
-  log "---"
-  log_cmd "cat $base_dir/etc/hostname"
-  log "---"
-  log
 
   echo "## Network Information"															| tee -a $FOREMAN_REPORT
   echo 																											>> $FOREMAN_REPORT
