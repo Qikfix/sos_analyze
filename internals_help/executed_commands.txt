@@ -1,137 +1,211 @@
-base_dir=$sos_path
-base_dir=$1
-base_foreman="$1/sos_commands/foreman/foreman-debug/"
 
-## Naming Resolution"
+## Naming Resolution
 cat $base_dir/etc/hosts
 cat $base_dir/etc/resolv.conf
 
-## Network Information"
+## Hardware
+cat $base_dir/dmidecode | grep -E '(Vendor|Manufacture)' | head -n3
+
+## Network Information
 cat $base_dir/ip_addr
 cat $base_dir/route
 
-## Selinux"
+## Selinux
 cat $base_dir/etc/selinux/config
+grep setroubleshoot $base_dir/installed-rpms
 
-## Installed Packages (satellite)"
-grep satellite $base_dir/installed-rpms 
+## Installed Packages (satellite)
+grep satellite $base_dir/installed-rpms
 cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | grep -v "Red Hat" | sort -k2
 
-## Subscriptions"
+## Subscriptions
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity
+grep -E '(^katello-agent|^gofer)' $base_dir/installed-rpms
+cat $base_dir/sos_commands/systemd/systemctl_list-units | grep goferd
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--installed
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_list_--consumed
 
-## Repos"
+## Repos
 cat $base_dir/sos_commands/yum/yum_-C_repolist
 cat $base_dir/sos_commands/yum/yum_history
 cat $base_dir/var/log/yum.log
 
-## Upgrade"
-grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log| wc -l
-grep "^\[ERROR" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log
-tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log
+## Upgrade
+cmd="grep "Running installer with args" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+cmd="grep "Running installer with args" $base_dir/var/log/foreman-installer/satellite.log"
 
-## Disk"
+cmd="grep "Running installer with args" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.* | sort -rk3 | cut -d: -f2-"
+cmd="grep "Running installer with args" $base_dir/var/log/foreman-installer/satellite.* | sort -rk3 | cut -d: -f2-"
+
+cmd="grep '^[ERROR' $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
+cmd="grep '^[ERROR' $base_dir/var/log/foreman-installer/satellite.log | wc -l"
+
+cmd="grep '^[ERROR' $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+cmd="grep '^[ERROR' $base_dir/var/log/foreman-installer/satellite.log"
+
+cmd="grep "Upgrade completed" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log | wc -l"
+cmd="grep "Upgrade completed" $base_dir/var/log/foreman-installer/satellite.log | wc -l"
+
+cmd="tail -20 $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+cmd="tail -20 $base_dir/var/log/foreman-installer/satellite.log"
+
+
+## Disk
 cat $base_dir/df
 cat $base_dir/sos_commands/foreman/foreman-debug/disk_space_output
+grep -h -r "No space left on device" $base_dir/* 2>/dev/null
 
-## Memory"
+## Memory
 cat $base_dir/free
 cat $base_dir/ps | sort -nrk6 | head -n5
-cat $base_foreman/ps-awfux | sort -nr | awk '{print $1, $6}' | grep -v ^USER | grep -v ^COMMAND | awk  '{a[$1] += $2} END{for (i in a) print i, a[i]}' | sort -nrk2
-cat $base_foreman/ps-awfux | grep ^postgres | grep idle$ | grep "candlepin candlepin" | wc -l
-cat $base_foreman/ps-awfux | grep ^postgres | grep idle$ | grep "foreman foreman" | wc -l
-cat $base_foreman/ps-awfux | grep ^postgres | grep idle$ | wc -l
+cat $base_dir/ps | sort -nr | awk '{print $1, $6}' | grep -v ^USER | grep -v ^COMMAND | grep -v "^ $" | awk '{a[$1] += $2} END{for (i in a) print i, a[i]}' | sort -nrk2
+cat $base_dir/ps | grep ^postgres | grep idle$ | grep "candlepin candlepin" | wc -l
+cat $base_dir/ps | grep ^postgres | grep idle$ | grep "foreman foreman" | wc -l
+cat $base_dir/ps | grep ^postgres | grep idle$ | wc -l
 
-## CPU"
+## CPU
 cat $base_dir/proc/cpuinfo | grep processor | wc -l
 
-## Messages"
+## Messages
 grep ERROR $base_dir/var/log/messages
 
-## Out of memory"
-grep 'Out of memory' $base_dir/var/log/messages
+## Out of Memory
+grep "Out of memory" $base_dir/var/log/messages
 
-## Foreman Tasks"
+## Foreman Tasks
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
+cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | wc -l"
 cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l
 
-## Hammer Ping"
-cat $base_dir/sos_commands/foreman/foreman-debug/hammer-ping
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | cut -d, -f3 | grep Actions | sort | uniq -c | sort -nr"
+cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed '1,3d' | cut -d| -f3 | grep Actions | sort | uniq -c | sort -nr"
 
-## Katello service status"
-cat $base_dir/sos_commands/foreman/foreman-debug/katello_service_status  
 
-## MongoDB Storage"
+## Hammer Ping
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/hammer-ping"
+cmd="cat $base_dir/sos_commands/foreman/hammer_ping"
+
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/katello_service_status"
+cmd="cat $base_dir/sos_commands/foreman/foreman-maintain_service_status"
+
+cmd="grep -E '(^*|Active)' $base_dir/sos_commands/foreman/foreman-debug/katello_service_status | tr '^*' 'n'"
+cmd="grep -E '(^*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '^*' 'n'"
+
+
+## MongoDB Storage
 cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space
 
-## PostgreSQL Storage"
-cat $base_dir/sos_commands/foreman/foreman-debug/postgres_disk_space
+## PostgreSQL Storage
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/postgres_disk_space"
+cmd="cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
 
-## Passenger"
-cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool
+head -n30 $base_dir/sos_commands/katello/db_table_size
 
-## Foreman Tasks"
-cat $base_dir/sos_commands/foreman/foreman-debug/ps-awfux  | grep dynflow_executor$ 
+## Passenger
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool"
+cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_pool"
 
-## Qpidd"
-grep -E '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q 
-cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | wc -l
-cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep "1     1$" | wc -l
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_requests | grep uri | sort -k3 | uniq -c"
+cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_requests | grep uri | sort -k3 | uniq -c"
 
-## Foreman logs (error)"
-grep "\[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr
 
-## Foreman cron"
+## Foreman Tasks
+cat $base_dir/ps | grep dynflow_executor$
+
+## Qpidd
+cmd="grep -E '( queue| ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
+cmd="grep -E '( queue| ===|katello_event_queue)' $base_dir/sos_commands/katello/$qpid_filename"
+
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | wc -l"
+cmd="cat $base_dir/sos_commands/katello/$qpid_filename | grep pulp.agent | wc -l"
+
+cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | grep pulp.agent | grep " 1.*1$" | wc -l"
+cmd="cat $base_dir/sos_commands/katello/$qpid_filename | grep pulp.agent | grep " 1.*1$" | wc -l"
+
+
+## Foreman logs (error)
+grep -h "[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr | head -n40
+
+## Foreman cron
 tail -20 $base_foreman/var/log/foreman/cron.log
 
-## Httpd"
-grep queue $base_foreman/var/log/httpd/error_log | wc -l
-grep queue $base_foreman/var/log/httpd/error_log  | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c
+## Httpd
+grep 'Request queue is full' $base_foreman/var/log/httpd/error_log | wc -l
+grep queue $base_foreman/var/log/httpd/error_log | awk '{print $2, $3}' | cut -d: -f1,2 | uniq -c
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1, $6, $7}' | sort | uniq -c | sort -nr | head -n 50
 
-## RHSM"
+## RHSM
+grep proxy $base_dir/etc/rhsm/rhsm.conf | grep -v ^#
+grep -E '(^ proxy_url|^ proxy_port|^ proxy_username|^ proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml
+grep -i proxy $base_dir/etc/sysconfig/virt-who
 grep ERROR $base_dir/var/log/rhsm/rhsm.log
 grep WARNING $base_dir/var/log/rhsm/rhsm.log
+grep "is assigned to 2 different systems" $base_dir/var/log/rhsm/rhsm.log | awk '{print $9}' | sed -e "s/'//g" | sort -u | wc -l
+grep "is assigned to 2 different systems" $base_dir/var/log/rhsm/rhsm.log | awk '{print $9}' | sed -e "s/'//g" | sort -u
 grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
 
-## Virt-who"
+## Virt-who
+cat $base_dir/sos_commands/systemd/systemctl_list-units | grep virt-who
+cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$
 ls -l $base_dir/etc/virt-who.d
-for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done
-for b in $(ls -1 $base_dir/etc/virt-who.d/*); do echo; echo $b; echo "==="; cat -vet $b; echo "==="; done
+for b in $(ls -1 $base_dir/etc/virt-who.d/*.conf); do echo; echo $b; echo "==="; cat $b; echo "==="; done
+for b in $(ls -1 $base_dir/etc/virt-who.d/*.conf); do echo; echo $b; echo "==="; cat -vet $b; echo "==="; done
+cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep "cmd=virt-who" | awk '{print $1}' | sort | uniq -c
+cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep "cmd=virt-who" | awk '{print $1}' | sort | uniq -c
 
-## Hypervisors tasks"
-cat $base_foreman/foreman_tasks_tasks.csv | grep Hypervisors | sed -e 's/,/ /g' | sort -rk4 | head -n 30
+## Hypervisors tasks
+cmd="cat $base_foreman/foreman_tasks_tasks.csv | grep -E '(^ id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d| -f3,4,5,6,7"
+cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | grep -E '(^ id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d| -f3,4,5,6,7"
 
-## Tomcat"
-grep tomcat $base_foreman/ps-awfux
+
+## Tomcat
+grep tomcat $base_dir/ps
 cat $base_foreman/var/log/candlepin/cpdb.log
 
-## Candlepin"
+## Candlepin
 grep -B1 Updated $base_foreman/var/log/candlepin/candlepin.log
 grep ERROR $base_foreman/var/log/candlepin/candlepin.log | cut -d ' ' -f1,3- | uniq -c
 grep ERROR $base_foreman/var/log/candlepin/error.log | cut -d ' ' -f1,3- | uniq -c
 tail -30 $base_foreman/var/log/candlepin/error.log
+cat $base_dir/sos_commands/candlepin/du_-sh_.var.lib.candlepin
 
-## Cron"
+## Cron
 ls -l $base_dir/var/spool/cron/*
 for b in $(ls -1 $base_dir/var/spool/cron/*); do echo; echo $b; echo "==="; cat $b; echo "==="; done
 
-## Files in etc/cron*"
-find $base_dir/etc/cron*
-#  echo "## Audit"
+## Files in etc/cron*
+find $base_dir/etc/cron* -type f | awk 'FS="/etc/" {print $2}'
 
-## Foreman Settings"
+## Foreman Settings
 cat $base_foreman/etc/foreman/settings.yaml
 cat $base_foreman/etc/foreman-installer/custom-hiera.yaml
 
-## PostgreSQL"
-grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l
-grep -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log
+## PostgreSQL
+grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l
+grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log
 grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l
-grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log
-cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\t\t".*# | sort
+grep -h ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log
+cat $base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^# | grep -v ^$ | grep -v -P ^"\t\t".*#
 
-## Please check out the file /tmp/report-$final_name.log"
+## Tuning
+cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | grep 'ServerLimit|StartServers'
+cat $base_dir/etc/httpd/conf.d/05-foreman.conf | grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
+cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
+cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | grep 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout'
+cat $base_dir/etc/httpd/conf.d/passenger.conf | grep 'MaxPoolSize|PassengerMaxRequestQueueSize'
+cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | grep 'MaxPoolSize|PassengerMaxRequestQueueSize'
+cat $base_dir/etc/default/pulp_workers | grep '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'
+cat $base_dir/etc/sysconfig/foreman-tasks | grep 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'
+cat $base_dir/etc/sysconfig/dynflowd | grep 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'
+cat $base_dir/var/lib/pgsql/data/postgresql.conf | grep 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | grep -v '^#'
+cat $base_dir/etc/tomcat/tomcat.conf | grep 'JAVA_OPTS'
+cat $base_dir/etc/qpid/qpidd.conf | grep 'mgmt_pub_interval'
+cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/systemd/system/qdrouterd.service.d/90-limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/systemd/system/smart_proxy_dynflow_core.service.d/90-limits.conf | grep 'LimitNOFILE'
+cat $base_dir/etc/sysctl.conf | grep 'fs.aio-max-nr'
+grep EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks
+grep EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd
