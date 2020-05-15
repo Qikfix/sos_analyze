@@ -84,6 +84,13 @@ report()
   log_cmd "cat $base_dir/etc/resolv.conf"
   log "---"
   log
+  
+  log "// hostname"
+  log "cat $base_dir/etc/hostname"
+  log "---"
+  log_cmd "cat $base_dir/etc/hostname"
+  log "---"
+  log
 
   log_tee "## Hardware"
   log
