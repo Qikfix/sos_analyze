@@ -8,18 +8,46 @@
 
 FOREMAN_REPORT="/tmp/$$.log"
 
+
+
 main()
 {
   > $FOREMAN_REPORT
 
-  sos_path=$1
-  base_dir=$sos_path
+  #sos_path=$1
+  #base_dir=$sos_path
   final_name=$(echo $base_dir | sed -e 's#/$##g' | grep -o sos.* | awk -F"/" '{print $NF}')
 
-  if [ ! -f $base_dir/version.txt ]; then
+#  if [ ! -f $base_dir/version.txt ]; then
+#    echo "This is not a sosreport dir, please inform the path to the correct one."
+#    exit 1
+#  fi
+
+  # detect base directory
+
+  base_dir=""
+  sos_subdir=`ls -d $1/sosreport-* $1/foreman-debug-* $1/spacewalk-debug 2>/dev/null | grep . | head -1`
+
+  if [ -d conf ] || [ -d sos_commands ] || [ -f version.txt ] || [ -f hammer-ping ]; then
+
+    base_dir=`pwd`
+
+  elif [ -d $1/conf ] || [ -d $1/sos_commands ] || [ -f $1/version.txt ] || [ -f $1/hammer-ping ]; then
+
+    base_dir="$1"
+
+  elif [ -d $sos_subdir/conf ] || [ -d $sos_subdir/sos_commands ] || [ -f $sos_subdir/version.txt ] || [ -f $sos_subdir/hammer-ping ]; then
+
+    base_dir="$sos_subdir"
+
+  else
+
     echo "This is not a sosreport dir, please inform the path to the correct one."
     exit 1
+
   fi
+
+  # detect presence of foreman-debug directory
 
   if [ -d $base_dir/sos_commands/foreman/foreman-debug ]; then
     base_foreman="/sos_commands/foreman/foreman-debug/"
@@ -30,6 +58,8 @@ main()
   fi
 
   echo "The sosreport is: $base_dir"												| tee -a $FOREMAN_REPORT
+
+  consolidate_differences
 
   #report $base_dir $sub_dir $base_foreman $sos_version
   report $base_dir $base_foreman $sos_version
@@ -50,6 +80,103 @@ log_cmd()
   echo "$@" | bash &>> $FOREMAN_REPORT
 }
 
+consolidate_differences()
+{
+
+  # create a few basic links
+
+  if [ ! -f $base_dir/version.txt ]; then touch $base_dir/version.txt; fi
+
+  if [ -d $base_dir/usr/lib ] && [ ! -f $base_dir/lib ]; then ln -s usr/lib $base_dir/lib 2>/dev/null; fi
+
+  mkdir -p $base_dir/sos_commands/foreman/foreman-debug 2>/dev/null
+
+
+  # this section handles spacewalk-debug files
+
+  if [ -d $base_dir/conf ]; then
+
+        mkdir -p $base_dir/var/log
+        ln -s conf $base_dir/etc 2>/dev/null
+
+        if [ -d $base_dir/conf/tomcat/tomcat6 ]; then ln -s tomcat/tomcat6 $base_dir/conf/tomcat6 2>/dev/null; fi
+
+        if [ -d $base_dir/httpd-logs/httpd ]; then ln -s ../../httpd-logs/httpd $base_dir/var/log/httpd 2>/dev/null; fi
+        if [ -d $base_dir/tomcat-logs/tomcat6 ]; then ln -s ../../tomcat-logs/tomcat6 $base_dir/var/log/tomcat6 2>/dev/null; fi
+        if [ -d $base_dir/rhn-logs/rhn ]; then ln -s ../../rhn-logs/rhn $base_dir/var/log/rhn 2>/dev/null; fi
+        if [ -d $base_dir/cobbler-logs ]; then ln -s ../../cobbler-logs $base_dir/var/log/cobbler 2>/dev/null; fi
+        if [ -d $base_dir/audit-log ]; then ln -s ../../audit-log i$base_dir/var/log/audit 2>/dev/null; fi
+        if [ -d $base_dir/schema-upgrade-logs ]; then ln -s ../../../schema-upgrade-logs $base_dir/var/log/spacewalk/schema-upgrade 2>/dev/null; fi
+
+        mkdir -p $base_dir/sos_commands/foreman/foreman-debug
+
+    	if [ -d $base_dir/containers ]; then
+    		mkdir -p $base_dir/sos_commands/podman
+    		if [ -f $base_dir/containers/ps ]; then ln -s ../../containers/ps $base_dir/sos_commands/podman/podman_ps 2>/dev/null; fi
+    	fi
+
+  fi
+
+
+  # this section links directories together to ensure that scripts can find their content
+
+  if [ -d $base_dir/etc ]; then ln -s ../../../etc $base_dir/sos_commands/foreman/foreman-debug/etc 2>/dev/null; fi
+  if [ -d $base_dir/usr ]; then ln -s ../../../usr $base_dir/sos_commands/foreman/foreman-debug/usr 2>/dev/null; fi
+  if [ -d $base_dir/var ]; then ln -s ../../../var $base_dir/sos_commands/foreman/foreman-debug/var 2>/dev/null; fi
+
+  if [ -d $base_dir/sos_commands/dmraid ]; then ln -s dmraid $base_dir/sos_commands/devicemapper 2>/dev/null; fi
+  if [ -d $base_dir/sos_commands/lsbrelease ]; then ln -s lsbrelease $base_dir/sos_commands/release 2>/dev/null; fi
+  if [ -d $base_dir/sos_commands/printing ]; then ln -s printing $base_dir/sos_commands/cups 2>/dev/null; fi
+
+
+  # this section populates the sos_commands directory and various links in the root directory of the sosreport
+
+  for MYENTRY in `grep . /tmp/sysmgmt/sos_entries.txt | grep -v ^\/#`; do
+	MYARRAY=()
+	for i in "`echo $MYENTRY | tr ',' '\n'`"; do
+		MYARRAY+=($i)
+	done
+
+	count=0
+	MYDIR=""
+	MYFILE=""
+	MATCH=""
+	for i in "${MYARRAY[@]}"; do
+		let count=$count+1
+
+		if [ "$count" -eq 1 ]; then
+
+			# this section finds and links the preferred file names
+
+			MYDIR=`dirname $i`
+			MYFILE=`basename $i`
+
+			MATCH=`find $base_dir -type f -name $MYFILE 2>/dev/null | egrep -v '\./containers/ps'`	# containers/ps contains podman processes, not normal processes
+
+			if [ -f "$MATCH" ] && [ ! -L "$MATCH" ] && [ ! -f "$i" ]; then
+				mkdir -p $base_dir/$MYDIR
+				ln -s -r $MATCH $base_dir/$i 2>/dev/null
+				break	# if we found the preferred file, break regardless of whether or not the link operation works
+			fi
+		else
+
+			# this section finds and links older file names
+
+			MATCH=`find $base_dir -type f -name $i 2>/dev/null`
+			LINKTARGET=`echo $MYDIR/$MYFILE`
+
+			if [ -f "$MATCH" ] && [ ! -L "$MATCH" ] && [ ! -f "$LINKTARGET" ]; then
+				mkdir -p $base_dir/$MYDIR
+				ln -s -r $MATCH $base_dir/$LINKTARGET 2>/dev/null
+				break	# if the first attempt fails, so will subsequent finds; we might as well break here
+			fi
+
+		fi
+
+
+	done
+  done
+}
 
 report()
 {
@@ -84,7 +211,7 @@ report()
   log_cmd "cat $base_dir/etc/resolv.conf"
   log "---"
   log
-  
+
   log "// hostname"
   log "cat $base_dir/etc/hostname"
   log "---"
@@ -437,7 +564,7 @@ report()
   log_tee "## Foreman Tasks"
   log
 
-  
+
   if [ "$sos_version" == "old" ];then
     cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
   else
@@ -556,7 +683,7 @@ report()
   log "---"
   log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size"
   log "---"
-  log  
+  log
 
 
 
@@ -1124,7 +1251,7 @@ report()
   log_cmd "grep EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
   log "---"
   log
- 
+
   log "// dynflow executors - 6.4 or greater"
   log "grep EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
   log "---"
@@ -1140,15 +1267,15 @@ report()
 
 ## TODO
 
-# cat apache/rpm_-V_httpd 
-# cat foreman/rpm_-V_foreman-debug 
-# cat krb5/rpm_-V_krb5-libs 
-# cat ldap/rpm_-V_openldap 
-# cat postgresql/rpm_-V_postgresql 
-# cat qpid/rpm_-V_qpid-cpp-server_qpid-tools 
-# cat qpid_dispatch/rpm_-V_qpid-dispatch-router 
-# cat tomcat/rpm_-V_tomcat 
-# cat virtwho/rpm_-V_virt-who 
+# cat apache/rpm_-V_httpd
+# cat foreman/rpm_-V_foreman-debug
+# cat krb5/rpm_-V_krb5-libs
+# cat ldap/rpm_-V_openldap
+# cat postgresql/rpm_-V_postgresql
+# cat qpid/rpm_-V_qpid-cpp-server_qpid-tools
+# cat qpid_dispatch/rpm_-V_qpid-dispatch-router
+# cat tomcat/rpm_-V_tomcat
+# cat virtwho/rpm_-V_virt-who
 
 
 
@@ -1156,7 +1283,7 @@ report()
 
 
   mv $FOREMAN_REPORT /tmp/report_${USER}_$final_name.log
-  echo 
+  echo
   echo
   echo "## Please check out the file /tmp/report_${USER}_$final_name.log"
 }
