@@ -2,6 +2,7 @@
 ## Naming Resolution
 cat $base_dir/etc/hosts
 cat $base_dir/etc/resolv.conf
+cat $base_dir/etc/hostname
 
 ## Hardware
 cat $base_dir/dmidecode | grep -E '(Vendor|Manufacture)' | head -n3

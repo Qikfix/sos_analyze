@@ -1153,7 +1153,11 @@ report()
 
 
 
-
+  if [ /tmp/script/ins_check.sh ]; then
+    echo "Calling insights ..."
+    /tmp/script/ins_check.sh $sos_path >> $FOREMAN_REPORT
+    echo "done."
+  fi
 
   mv $FOREMAN_REPORT /tmp/report_${USER}_$final_name.log
   echo 
