@@ -481,6 +481,19 @@ report()
   log
 
 
+
+  log "// paused foreman tasks"
+  log "grep -E '(^                  id|paused)' $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed 's/  //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'"
+  log "---"
+  log_cmd "grep -E '(^                  id|paused)' $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed 's/  //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'"
+  log "---"
+  log
+
+# $ grep -E '(^                  id|paused)' 02685690/0070-sosreport-oitphcwebsat6-02685690-2020-06-24-jayzwoe.tar.xz/sosreport-oitphcwebsat6-02685690-2020-06-24-jayzwoe/sos_commands/foreman/foreman_tasks_tasks | sed 's/  //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'
+
+
+
+
   log_tee "## Hammer Ping"
   log
 
