@@ -746,7 +746,7 @@ report()
   log
 
 
-  log_cmd "## Httpd"
+  log_tee "## Httpd"
   log
 
   log "// queues on error_log means the # of requests crossed the border. Satellite inaccessible"
@@ -783,6 +783,36 @@ report()
   log_cmd "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$1, \$6, \$7}' | sort | uniq -c | sort -nr | head -n 50"
   log "---"
   log
+
+
+  log "// General 2XX errors on httpd logs"
+  log "grep -P '\" 2\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 2\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
+  log "// General 3XX errors on httpd logs"
+  log "grep -P '\" 3\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 3\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
+  log "// General 4XX errors on httpd logs"
+  log "grep -P '\" 4\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 4\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
+  log "// General 5XX errors on httpd logs"
+  log "grep -P '\" 5\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 5\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
 
 
 

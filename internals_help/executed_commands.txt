@@ -149,6 +149,10 @@ grep queue $base_foreman/var/log/httpd/error_log | awk '{print $2, $3}' | cut -d
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1, $6, $7}' | sort | uniq -c | sort -nr | head -n 50
+grep -P '" 2dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
+grep -P '" 3dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
+grep -P '" 4dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
+grep -P '" 5dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
 
 ## RHSM
 grep proxy $base_dir/etc/rhsm/rhsm.conf | grep -v ^#
