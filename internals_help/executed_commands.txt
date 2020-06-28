@@ -98,6 +98,9 @@ cmd="grep -E '(^*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_servi
 ## Puppet Server
 grep ERROR $base_dir/var/log/puppetlabs/puppetserver/puppetserver.log
 
+## Audit
+grep -o denied.* $base_dir/var/log/audit/audit.log | sort -u
+
 ## MongoDB Storage
 cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space
 
