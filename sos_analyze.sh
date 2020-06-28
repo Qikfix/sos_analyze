@@ -532,6 +532,16 @@ report()
   log
 
 
+  log_tee "## Puppet Server"
+  log
+
+  log "// Puppet Server Error"
+  log "grep ERROR $base_dir/var/log/puppetlabs/puppetserver/puppetserver.log"
+  log "---"
+  log_cmd "grep ERROR $base_dir/var/log/puppetlabs/puppetserver/puppetserver.log"
+  log "---"
+  log
+
 
 
   log_tee "## MongoDB Storage"
