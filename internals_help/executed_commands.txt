@@ -76,10 +76,12 @@ grep "Out of memory" $base_dir/var/log/messages
 ## Foreman Tasks
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
 cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | wc -l"
-cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l
 
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | cut -d, -f3 | grep Actions | sort | uniq -c | sort -nr"
 cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed '1,3d' | cut -d| -f3 | grep Actions | sort | uniq -c | sort -nr"
+
+cmd="cat $base_dir/etc/cron.d/foreman-tasks"
+cmd="cat $base_dir/etc/cron.d/foreman-tasks"
 
 
 ## Hammer Ping

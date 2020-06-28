@@ -445,10 +445,8 @@ report()
   fi
 
   log "// total # of foreman tasks"
-  #log "cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
   log "$cmd"
   log "---"
-  #log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
   log_cmd "$cmd"
   log "---"
   log
@@ -462,6 +460,20 @@ report()
 
 
   log "// Tasks TOP"
+  log "$cmd"
+  log "---"
+  log_cmd "$cmd"
+  log "---"
+  log
+
+
+  if [ "$sos_version" == "old" ];then
+    cmd="cat $base_dir/etc/cron.d/foreman-tasks"
+  else
+    cmd="cat $base_dir/etc/cron.d/foreman-tasks"
+  fi
+
+  log "// foreman tasks cleanup script"
   log "$cmd"
   log "---"
   log_cmd "$cmd"
