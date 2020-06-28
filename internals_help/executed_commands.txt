@@ -83,6 +83,7 @@ cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed '1,3d' | cut -
 cmd="cat $base_dir/etc/cron.d/foreman-tasks"
 cmd="cat $base_dir/etc/cron.d/foreman-tasks"
 
+grep -E '(^ id|paused)' $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed 's/ //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'
 
 ## Hammer Ping
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/hammer-ping"
