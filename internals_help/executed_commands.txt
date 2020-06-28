@@ -151,6 +151,7 @@ grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
 cat $base_dir/sos_commands/systemd/systemctl_list-units | grep virt-who
 cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$
 ls -l $base_dir/etc/virt-who.d
+grep -h ^server $base_dir/etc/virt-who.d/*.conf | sort | uniq -c
 for b in $(ls -1 $base_dir/etc/virt-who.d/*.conf); do echo; echo $b; echo "==="; cat $b; echo "==="; done
 for b in $(ls -1 $base_dir/etc/virt-who.d/*.conf); do echo; echo $b; echo "==="; cat -vet $b; echo "==="; done
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep "cmd=virt-who" | awk '{print $1}' | sort | uniq -c
