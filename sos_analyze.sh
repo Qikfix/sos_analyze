@@ -489,7 +489,27 @@ report()
   log "---"
   log
 
-# $ grep -E '(^                  id|paused)' 02685690/0070-sosreport-oitphcwebsat6-02685690-2020-06-24-jayzwoe.tar.xz/sosreport-oitphcwebsat6-02685690-2020-06-24-jayzwoe/sos_commands/foreman/foreman_tasks_tasks | sed 's/  //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'
+
+
+  log_tee "## Pulp"
+  log
+
+  log "// number of tasks not finished"
+  log "grep '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks | wc -l"
+  log "---"
+  log_cmd "grep '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks | wc -l"
+  log "---"
+  log
+
+
+#grep "\"task_id\"" 02681559/0050-sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf.tar.xz/sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf/sos_commands/pulp/pulp-running_tasks | wc -l
+
+  log "// pulp task not finished"
+  log "grep -E '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+  log "---"
+  log_cmd "grep -E '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+  log "---"
+  log
 
 
 

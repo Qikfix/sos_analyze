@@ -85,6 +85,10 @@ cmd="cat $base_dir/etc/cron.d/foreman-tasks"
 
 grep -E '(^ id|paused)' $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed 's/ //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'
 
+## Pulp
+grep '"task_id"' $base_dir/sos_commands/pulp/pulp-running_tasks | wc -l
+grep -E '("finish_time" : null|"start_time"|"state"|"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks
+
 ## Hammer Ping
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/hammer-ping"
 cmd="cat $base_dir/sos_commands/foreman/hammer_ping"
