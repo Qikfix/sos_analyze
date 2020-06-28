@@ -807,6 +807,18 @@ report()
   log "---"
   log
 
+  log "// duplicated server entries on virt-who configuration"
+  log "grep -h ^server $base_dir/etc/virt-who.d/*.conf | sort | uniq -c"
+  log "---"
+  log_cmd "grep -h ^server $base_dir/etc/virt-who.d/*.conf | sort | uniq -c"
+  log "---"
+  log
+
+
+
+grep ^server * | sort | uniq -c
+
+
   log "// virt-who configuration content files"
   log "for b in \$(ls -1 \$base_dir/etc/virt-who.d/*.conf); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"
   log "---"
