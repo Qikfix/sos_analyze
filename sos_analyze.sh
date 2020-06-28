@@ -543,6 +543,16 @@ report()
   log
 
 
+  log_tee "## Audit"
+  log
+
+  log "// denied in audit.log"
+  log "grep -o denied.* $base_dir/var/log/audit/audit.log  | sort -u"
+  log "---"
+  log_cmd "grep -o denied.* $base_dir/var/log/audit/audit.log  | sort -u"
+  log "---"
+  log
+
 
   log_tee "## MongoDB Storage"
   log
@@ -967,10 +977,6 @@ grep ^server * | sort | uniq -c
   log "---"
   log
 
-
-#  echo "## Audit"										| tee -a $FOREMAN_REPORT
-#  echo 																											>> $FOREMAN_REPORT
-#$ cat var/log/audit/audit.log
 
   log_tee "## Foreman Settings"
   log
