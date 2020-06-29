@@ -669,7 +669,7 @@ consolidate_differences()
 
   if [ -d $base_dir/usr/lib ] && [ ! -f $base_dir/lib ]; then ln -s usr/lib $base_dir/lib 2>/dev/null; fi
 
-  mkdir -p $base_dir/sos_commands/foreman/foreman-debug 2>/dev/null
+  #mkdir -p $base_dir/sos_commands/foreman/foreman-debug 2>/dev/null
 
 
   # this section handles spacewalk-debug files
@@ -688,7 +688,7 @@ consolidate_differences()
         if [ -d $base_dir/audit-log ]; then ln -s ../../audit-log i$base_dir/var/log/audit 2>/dev/null; fi
         if [ -d $base_dir/schema-upgrade-logs ]; then ln -s ../../../schema-upgrade-logs $base_dir/var/log/spacewalk/schema-upgrade 2>/dev/null; fi
 
-        mkdir -p $base_dir/sos_commands/foreman/foreman-debug
+        #mkdir -p $base_dir/sos_commands/foreman/foreman-debug
 
     	if [ -d $base_dir/containers ]; then
     		mkdir -p $base_dir/sos_commands/podman
@@ -700,9 +700,9 @@ consolidate_differences()
 
   # this section links directories together to ensure that scripts can find their content
 
-  if [ -d $base_dir/etc ]; then ln -s ../../../etc $base_dir/sos_commands/foreman/foreman-debug/etc 2>/dev/null; fi
-  if [ -d $base_dir/usr ]; then ln -s ../../../usr $base_dir/sos_commands/foreman/foreman-debug/usr 2>/dev/null; fi
-  if [ -d $base_dir/var ]; then ln -s ../../../var $base_dir/sos_commands/foreman/foreman-debug/var 2>/dev/null; fi
+  #if [ -d $base_dir/etc ]; then ln -s ../../../etc $base_dir/sos_commands/foreman/foreman-debug/etc 2>/dev/null; fi
+  #if [ -d $base_dir/usr ]; then ln -s ../../../usr $base_dir/sos_commands/foreman/foreman-debug/usr 2>/dev/null; fi
+  #if [ -d $base_dir/var ]; then ln -s ../../../var $base_dir/sos_commands/foreman/foreman-debug/var 2>/dev/null; fi
 
   if [ -d $base_dir/sos_commands/dmraid ] && [ ! -d $base_dir/sos_commands/devicemapper ]; then ln -s dmraid $base_dir/sos_commands/devicemapper 2>/dev/null; fi
   if [ -d $base_dir/sos_commands/lsbrelease ]; then ln -s lsbrelease $base_dir/sos_commands/release 2>/dev/null; fi
