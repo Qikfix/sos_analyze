@@ -911,9 +911,6 @@ report()
 
 
 
-grep ^server * | sort | uniq -c
-
-
   log "// virt-who configuration content files"
   log "for b in \$(ls -1 \$base_dir/etc/virt-who.d/*.conf); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"
   log "---"
