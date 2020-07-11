@@ -2,6 +2,7 @@
 ## Naming Resolution
 cat $base_dir/etc/hosts
 cat $base_dir/etc/resolv.conf
+cat $base_dir/etc/hostname
 
 ## Hardware
 cat $base_dir/dmidecode | grep -E '(Vendor|Manufacture)' | head -n3
@@ -75,11 +76,18 @@ grep "Out of memory" $base_dir/var/log/messages
 ## Foreman Tasks
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
 cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | wc -l"
-cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l
 
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | cut -d, -f3 | grep Actions | sort | uniq -c | sort -nr"
 cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed '1,3d' | cut -d| -f3 | grep Actions | sort | uniq -c | sort -nr"
 
+cmd="cat $base_dir/etc/cron.d/foreman-tasks"
+cmd="cat $base_dir/etc/cron.d/foreman-tasks"
+
+grep -E '(^ id|paused)' $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed 's/ //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'
+
+## Pulp
+grep '"task_id"' $base_dir/sos_commands/pulp/pulp-running_tasks | wc -l
+grep -E '("finish_time" : null|"start_time"|"state"|"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks
 
 ## Hammer Ping
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/hammer-ping"
@@ -91,6 +99,12 @@ cmd="cat $base_dir/sos_commands/foreman/foreman-maintain_service_status"
 cmd="grep -E '(^*|Active)' $base_dir/sos_commands/foreman/foreman-debug/katello_service_status | tr '^*' 'n'"
 cmd="grep -E '(^*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '^*' 'n'"
 
+
+## Puppet Server
+grep ERROR $base_dir/var/log/puppetlabs/puppetserver/puppetserver.log
+
+## Audit
+grep -o denied.* $base_dir/var/log/audit/audit.log | sort -u
 
 ## MongoDB Storage
 cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space
@@ -135,6 +149,10 @@ grep queue $base_foreman/var/log/httpd/error_log | awk '{print $2, $3}' | cut -d
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1, $6, $7}' | sort | uniq -c | sort -nr | head -n 50
+grep -P '" 2dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
+grep -P '" 3dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
+grep -P '" 4dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
+grep -P '" 5dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
 
 ## RHSM
 grep proxy $base_dir/etc/rhsm/rhsm.conf | grep -v ^#
@@ -150,6 +168,7 @@ grep "Sending updated Host-to-guest" $base_dir/var/log/rhsm/rhsm.log
 cat $base_dir/sos_commands/systemd/systemctl_list-units | grep virt-who
 cat $base_dir/etc/sysconfig/virt-who | grep -v ^# | grep -v ^$
 ls -l $base_dir/etc/virt-who.d
+grep -h ^server $base_dir/etc/virt-who.d/*.conf | sort | uniq -c
 for b in $(ls -1 $base_dir/etc/virt-who.d/*.conf); do echo; echo $b; echo "==="; cat $b; echo "==="; done
 for b in $(ls -1 $base_dir/etc/virt-who.d/*.conf); do echo; echo $b; echo "==="; cat -vet $b; echo "==="; done
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep "cmd=virt-who" | awk '{print $1}' | sort | uniq -c

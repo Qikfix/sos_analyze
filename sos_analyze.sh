@@ -1152,10 +1152,8 @@ report()
   fi
 
   log "// total # of foreman tasks"
-  #log "cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
   log "$cmd"
   log "---"
-  #log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | wc -l"
   log_cmd "$cmd"
   log "---"
   log
@@ -1174,6 +1172,53 @@ report()
   log_cmd "$cmd"
   log "---"
   log
+
+
+  if [ "$sos_version" == "old" ];then
+    cmd="cat $base_dir/etc/cron.d/foreman-tasks"
+  else
+    cmd="cat $base_dir/etc/cron.d/foreman-tasks"
+  fi
+
+  log "// foreman tasks cleanup script"
+  log "$cmd"
+  log "---"
+  log_cmd "$cmd"
+  log "---"
+  log
+
+
+
+  log "// paused foreman tasks"
+  log "grep -E '(^                  id|paused)' $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed 's/  //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'"
+  log "---"
+  log_cmd "grep -E '(^                  id|paused)' $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed 's/  //g' | sed -e 's/ |/|/g' | sed -e 's/| /|/g' | sed -e 's/^ //g' | sed -e 's/|/,/g'"
+  log "---"
+  log
+
+
+
+  log_tee "## Pulp"
+  log
+
+  log "// number of tasks not finished"
+  log "grep '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks | wc -l"
+  log "---"
+  log_cmd "grep '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks | wc -l"
+  log "---"
+  log
+
+
+#grep "\"task_id\"" 02681559/0050-sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf.tar.xz/sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf/sos_commands/pulp/pulp-running_tasks | wc -l
+
+  log "// pulp task not finished"
+  log "grep -E '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+  log "---"
+  log_cmd "grep -E '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+  log "---"
+  log
+
+
 
 
   log_tee "## Hammer Ping"
@@ -1227,6 +1272,26 @@ report()
   log
 
 
+  log_tee "## Puppet Server"
+  log
+
+  log "// Puppet Server Error"
+  log "grep ERROR $base_dir/var/log/puppetlabs/puppetserver/puppetserver.log"
+  log "---"
+  log_cmd "grep ERROR $base_dir/var/log/puppetlabs/puppetserver/puppetserver.log"
+  log "---"
+  log
+
+
+  log_tee "## Audit"
+  log
+
+  log "// denied in audit.log"
+  log "grep -o denied.* $base_dir/var/log/audit/audit.log  | sort -u"
+  log "---"
+  log_cmd "grep -o denied.* $base_dir/var/log/audit/audit.log  | sort -u"
+  log "---"
+  log
 
 
   log_tee "## MongoDB Storage"
@@ -1388,7 +1453,7 @@ report()
   log
 
 
-  log_cmd "## Httpd"
+  log_tee "## Httpd"
   log
 
   log "// queues on error_log means the # of requests crossed the border. Satellite inaccessible"
@@ -1425,6 +1490,36 @@ report()
   log_cmd "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$1, \$6, \$7}' | sort | uniq -c | sort -nr | head -n 50"
   log "---"
   log
+
+
+  log "// General 2XX errors on httpd logs"
+  log "grep -P '\" 2\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 2\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
+  log "// General 3XX errors on httpd logs"
+  log "grep -P '\" 3\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 3\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
+  log "// General 4XX errors on httpd logs"
+  log "grep -P '\" 4\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 4\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
+  log "// General 5XX errors on httpd logs"
+  log "grep -P '\" 5\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log_cmd "grep -P '\" 5\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
+  log "---"
+  log
+
 
 
 
@@ -1513,6 +1608,15 @@ report()
   log_cmd "ls -l $base_dir/etc/virt-who.d"
   log "---"
   log
+
+  log "// duplicated server entries on virt-who configuration"
+  log "grep -h ^server $base_dir/etc/virt-who.d/*.conf | sort | uniq -c"
+  log "---"
+  log_cmd "grep -h ^server $base_dir/etc/virt-who.d/*.conf | sort | uniq -c"
+  log "---"
+  log
+
+
 
   log "// virt-who configuration content files"
   log "for b in \$(ls -1 \$base_dir/etc/virt-who.d/*.conf); do echo; echo \$b; echo \"===\"; cat \$b; echo \"===\"; done"
@@ -1640,10 +1744,6 @@ report()
   log "---"
   log
 
-
-#  echo "## Audit"										| tee -a $FOREMAN_REPORT
-#  echo 																											>> $FOREMAN_REPORT
-#$ cat var/log/audit/audit.log
 
   log_tee "## Foreman Settings"
   log
@@ -1860,7 +1960,11 @@ report()
 
 
 
-
+  if [ /tmp/script/ins_check.sh ]; then
+    echo "Calling insights ..."
+    /tmp/script/ins_check.sh $sos_path >> $FOREMAN_REPORT
+    echo "done."
+  fi
 
   mv $FOREMAN_REPORT /tmp/report_${USER}_$final_name.log
   echo
