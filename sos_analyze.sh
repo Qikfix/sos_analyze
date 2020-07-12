@@ -141,6 +141,7 @@ sos_commands/selinux/semodule_-l,selinux_modules
 sos_commands/hardware/dmesg_.bin.grep_-e_e820._-e_agp,dmesg_grep_-e_e820._-e_aperature
 sos_commands/networking/ifconfig_-a,ifconfig
 etc/hosts
+etc/selinux/config,selinux_state
 var/log/audit/audit.log,selinux_denials.log
 sos_commands/alternatives/alternatives_--display_elspec
 sos_commands/alternatives/alternatives_--display_emacs.etags
@@ -259,11 +260,12 @@ sos_commands/foreman/dynflow_schema_info
 sos_commands/foreman/dynflow_steps
 sos_commands/foreman/foreman_auth_table
 sos_commands/foreman/foreman_db_tables_sizes
-sos_commands/foreman/foreman-maintain_service_status
+sos_commands/foreman/foreman-maintain_service_status,katello_service_status
 sos_commands/foreman/foreman_settings_table
-sos_commands/foreman/foreman_tasks_tasks
+sos_commands/foreman/foreman_tasks_tasks,foreman_tasks_tasks.csv
 sos_commands/foreman/hammer_ping
 sos_commands/foreman/rpm_-V_foreman_foreman-proxy
+sos_commands/foreman/foreman-debug/mongodb_disk_space
 sos_commands/grub2/grub2-mkconfig
 sos_commands/grub2/ls_-lanR_.boot
 sos_commands/grub2/rpm_-V_grub2_grub2-common
@@ -288,7 +290,7 @@ sos_commands/java/readlink_-f_.usr.bin.java
 sos_commands/katello/db_table_size
 sos_commands/katello/katello_repositories
 sos_commands/katello/qpid-stat_-c_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671
-sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671
+sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671,qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671,qpid-stat-q
 sos_commands/katello/qpid-stat_-u_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671
 sos_commands/katello/rpm_-V_katello
 sos_commands/kdump/rpm_-V_kexec-tools
@@ -640,10 +642,12 @@ sos_commands/systemtap/rpm_-qa_.bin.egrep_-e_kernel._uname_-r_-e_systemtap_-e_el
 sos_commands/x11/dmesg_grep_-e_agpgart
 ifconfig,ifconfig_-a
 chkconfig,chkconfig_--list
+proc/cpuinfo
 date,date_--utc
 df,df_-al,df_-ali,df_-al_-x_autofs,df_-ali_-x_autofs,diskinfo
 dmidecode
 hostname,hostname_-f
+installed-rpms,rpm-manifest
 ip_addr,ip_address,ip_a
 last
 lsb_release
@@ -652,7 +656,7 @@ lsof,lsof_-b_M_-n_-l,lsof_-b_M_-n_-l_-c
 lspci,lspci_-nvv,lspci_-nnvv
 mount,mount_-l
 netstat,netstat_-W_-neopa,netstat_-neopa
-ps,ps_auxwww,ps_auxwwwm,ps_auxww,ps_auxww,ps_-elfL,ps_-elf,ps_axo_flags_state_uid_pid_ppid_pgid_sid_cls_pri_addr_sz_wchan_lstart_tty_time_cmd,ps_axo_pid_ppid_user_group_lwp_nlwp_start_time_comm_cgroup
+ps,ps_auxwww,ps_auxwwwm,ps_auxww,ps_auxww,ps_-elfL,ps_-elf,ps_axo_flags_state_uid_pid_ppid_pgid_sid_cls_pri_addr_sz_wchan_lstart_tty_time_cmd,ps_axo_pid_ppid_user_group_lwp_nlwp_start_time_comm_cgroup,ps-awfux
 pstree
 route,route_-n
 uname,uname_-a
