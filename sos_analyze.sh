@@ -5,6 +5,7 @@
 # Developer ..: Waldirio M Pinheiro <waldirio@gmail.com / waldirio@redhat.com>
 # Purpose ....: Analyze sosreport and summarize the information (focus on Satellite info)
 #
+#
 
 FOREMAN_REPORT="/tmp/$$.log"
 
