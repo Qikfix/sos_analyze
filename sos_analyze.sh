@@ -50,6 +50,17 @@ log_cmd()
   echo "$@" | bash &>> $FOREMAN_REPORT
 }
 
+# ref: https://unix.stackexchange.com/questions/44040/a-standard-tool-to-convert-a-byte-count-into-human-kib-mib-etc-like-du-ls1
+# Converts bytes value to human-readable string [$1: bytes value]
+bytesToHumanReadable() {
+    local i=${1:-0} d="" s=0 S=("Bytes" "KiB" "MiB" "GiB" "TiB" "PiB" "EiB" "YiB" "ZiB")
+    while ((i > 1024 && s < ${#S[@]}-1)); do
+        printf -v d ".%02d" $((i % 1024 * 100 / 1024))
+        i=$((i / 1024))
+        s=$((s + 1))
+    done
+    echo "$i$d ${S[$s]}"
+}
 
 report()
 {
@@ -1180,6 +1191,16 @@ report()
   log "cat $base_dir/etc/qpid/qpidd.conf | grep 'mgmt_pub_interval'"
   log "---"
   log_cmd "cat $base_dir/etc/qpid/qpidd.conf | grep 'mgmt_pub_interval'"
+  log "---"
+  log
+
+  log "// Insert qpidd information"
+  log "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | egrep \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | egrep \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc | awk '{print \"bytes: \"\$1}'"
+  fullsize_var_lib_qpid=$(cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | egrep " [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} " | awk '{print $5}' | paste -s -d+ | bc)
+  size_var_lib_qpid=$(bytesToHumanReadable ${fullsize_var_lib_qpid})
+  log "size: ${size_var_lib_qpid}"
   log "---"
   log
 
