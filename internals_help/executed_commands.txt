@@ -221,6 +221,7 @@ cat $base_dir/etc/sysconfig/dynflowd | grep 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMO
 cat $base_dir/var/lib/pgsql/data/postgresql.conf | grep 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | grep -v '^#'
 cat $base_dir/etc/tomcat/tomcat.conf | grep 'JAVA_OPTS'
 cat $base_dir/etc/qpid/qpidd.conf | grep 'mgmt_pub_interval'
+cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | egrep " [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} " | awk '{print $5}' | paste -s -d+ | bc | awk '{print "bytes: "$1}'
 cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | grep 'LimitNOFILE'
 cat $base_dir/etc/systemd/system/qdrouterd.service.d/90-limits.conf | grep 'LimitNOFILE'
 cat $base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf | grep 'LimitNOFILE'
