@@ -1333,19 +1333,20 @@ report()
   log
 
 
-  log_tee "httpd                            qdrouterd"
-  log_tee "  |                                  |"
-  log_tee "  |      celery     mongodb       qpidd"
-  log_tee "  |           |          |           |"
-  log_tee "  \-pulp -----/----------/-----------/"
-  log_tee "  |"
-  log_tee "  \-passenger"
-  log_tee "        |"
-  log_tee "        \-puppet       postgreSQL                 tomcat"
-  log_tee "        |                |   |                       |"
-  log_tee "        \-foreman -------/   \---------candlepin-----/"
-  log_tee "            |"
-  log_tee "            \-katello, dynflow, virt-who, subscription watch"
+  log "httpd                            qdrouterd"
+  log "  |                                  |"
+  log "  |      celery     mongodb       qpidd"
+  log "  |           |          |           |"
+  log "  \-pulp -----/----------/-----------/"
+  log "  |"
+  log "  \-passenger"
+  log "        |"
+  log "        \-puppet       postgreSQL                 tomcat"
+  log "        |                |   |                       |"
+  log "        \-foreman -------/   \---------candlepin-----/"
+  log "            |"
+  log "            \-katello, dynflow, virt-who, subscription watch"
+  log
   log
 
 
