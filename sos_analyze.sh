@@ -646,7 +646,7 @@ date,date_--utc
 df,df_-al,df_-ali,df_-al_-x_autofs,df_-ali_-x_autofs,diskinfo
 dmidecode
 hostname,hostname_-f
-installed-rpms,rpm-manifest
+installed-rpms,rpm-manifest,rpm-qa
 ip_addr,ip_address,ip_a
 last
 lsb-release,lsb_release
@@ -674,12 +674,9 @@ consolidate_differences()
 
   # create a few basic links
 
-  touch $base_dir/version.txt
+  if [ ! -f "$base_dir/version.txt" ]; then touch $base_dir/version.txt; fi
 
   if [ -d $base_dir/usr/lib ] && [ ! -f $base_dir/lib ]; then ln -s usr/lib $base_dir/lib 2>/dev/null; fi
-
-  #mkdir -p $base_dir/sos_commands/foreman/foreman-debug 2>/dev/null
-
 
   # this section handles spacewalk-debug files
 
@@ -697,8 +694,6 @@ consolidate_differences()
         if [ -d $base_dir/audit-log ]; then ln -s ../../audit-log i$base_dir/var/log/audit 2>/dev/null; fi
         if [ -d $base_dir/schema-upgrade-logs ]; then ln -s ../../../schema-upgrade-logs $base_dir/var/log/spacewalk/schema-upgrade 2>/dev/null; fi
 
-        #mkdir -p $base_dir/sos_commands/foreman/foreman-debug
-
     	if [ -d $base_dir/containers ]; then
     		mkdir -p $base_dir/sos_commands/podman
     		if [ -f $base_dir/containers/ps ]; then ln -s ../../containers/ps $base_dir/sos_commands/podman/podman_ps 2>/dev/null; fi
@@ -707,11 +702,7 @@ consolidate_differences()
   fi
 
 
-  # this section links directories together to ensure that scripts can find their content
-
-  #if [ -d $base_dir/etc ]; then ln -s ../../../etc $base_dir/sos_commands/foreman/foreman-debug/etc 2>/dev/null; fi
-  #if [ -d $base_dir/usr ]; then ln -s ../../../usr $base_dir/sos_commands/foreman/foreman-debug/usr 2>/dev/null; fi
-  #if [ -d $base_dir/var ]; then ln -s ../../../var $base_dir/sos_commands/foreman/foreman-debug/var 2>/dev/null; fi
+  # this section links directories together to ensure that scripts can find their contents
 
   if [ -d $base_dir/sos_commands/dmraid ] && [ ! -d $base_dir/sos_commands/devicemapper ]; then ln -s dmraid $base_dir/sos_commands/devicemapper 2>/dev/null; fi
   if [ -d $base_dir/sos_commands/lsbrelease ]; then ln -s lsbrelease $base_dir/sos_commands/release 2>/dev/null; fi
@@ -720,47 +711,77 @@ consolidate_differences()
 
   # this section populates the sos_commands directory and various links in the root directory of the sosreport
 
-	#LIST_OF_FILES=`find $base_dir -type f 2>/dev/null`
-
    for MYENTRY in `echo -e "$CSVLINKS"`; do
 
 	# we're separating each comma-separated line into separate entries
 	# then we'll check the target folder for each entry in order to find
 	# the best match.
 
-	MYARRAY=()
-	for i in "`echo $MYENTRY | tr ',' '\n'`"; do
-		MYARRAY+=($i)
-	done
+	#MYARRAY=()
+	#for i in "`echo $MYENTRY | tr ',' '\n'`"; do
+	#	MYARRAY+=($i)
+	#done
 
 	count=0
 	MYDIR=""
 	MATCH=""
-	FIRSTFILE=`basename "${MYARRAY[0]}"`
-	MYDIR=`dirname "${MYARRAY[0]}"`
-	for i in "${MYARRAY[@]}"; do
-		let count=$count+1
 
-		MYFILE=`basename $i`
-		MATCH=`find $base_dir -type f -name $MYFILE 2>/dev/null | egrep -v '\./containers/ps'`	# containers/ps contains podman processes, not normal processes
+	#FIRSTFILE=`basename "${MYARRAY[0]}"`
+	#MYDIR=`dirname "${MYARRAY[0]}"`
+	#for i in "${MYARRAY[@]}"; do
+	#	let count=$count+1
+	#	MYFILE=`basename $i`
+	#	MATCH=`find $base_dir -type f -name $MYFILE 2>/dev/null | egrep -v '\./containers/ps'`	# containers/ps contains podman processes, not normal processes
+	#	if [ -f "$MATCH" ] && [ ! -L "$MATCH" ]; then
+	#		if [ ! -f "$base_dir/$MYDIR/$FIRSTFILE" ]; then
+	#			mkdir -p "$base_dir/$MYDIR"
+	#			ln -s -r "$MATCH" "$base_dir/$MYDIR/$FIRSTFILE" 2>/dev/null
+	#		fi
+	#		break
+	#	fi
+	#done
 
+	FIRSTENTRY=`echo $MYENTRY | awk -F"," '{print $1}'`
+	#echo $FIRSTENTRY
+	FIRSTFILE=`basename "$FIRSTENTRY"`
+	MYDIR=`dirname "$FIRSTENTRY"`
+
+	#if [ ! -d "$MYDIR" ]; then
+	#	mkdir -p "$base_dir/$MYDIR"
+	#fi
+
+	IFS=$'\n'
+	SPLITENTRY=`echo $MYENTRY | tr ',' '\n'`
+	if [ ! -f "$FIRSTENTRY" ]; then
+	for i in "`echo -e $SPLITENTRY`"; do
+		#let count=$count+1
+
+		MYFILE=`basename $i` || echo $i
+		#echo $MYFILE
+		
 		#if [ "$count" -eq 1 ]; then
-			#MYDIR=`dirname $i`
-			#MATCH=`find $base_dir -type f -name $MYFILE 2>/dev/null | egrep -v '\./containers/ps'`	# containers/ps contains podman processes, not normal processes
+		#	MYFILE=$FIRSTFILE
 		#else
-			#MATCH=`find $base_dir -type f -name $i 2>/dev/null`
+		#	MYFILE=$i
 		#fi
 
+		#MATCH=`find $base_dir -type f -name $MYFILE 2>/dev/null | egrep -v '\./containers/ps'`  # containers/ps contains podman processes, not normal processes
+		MATCH=`find -ls -mount $base_dir -type f -name $MYFILE -path $base_dir/run -prune -o -print -path $base_dir/sys -prune -o -print -path $base_dir/sos_strings -prune -o -print -path $base_dir/sos_reports -prune -o -print -path $base_dir/sos_logs -prune -o -print -path $base_dir/container -prune -o -print -path "$base_dir/proc/[0-9]*" -prune -o -print -quit 2>/dev/null`
+
 		if [ -f "$MATCH" ] && [ ! -L "$MATCH" ]; then
-			if [ ! -f "$base_dir/$MYDIR/$FIRSTFILE" ]; then
+			if [ ! -f "$base_dir/$FIRSTENTRY" ]; then
 				mkdir -p "$base_dir/$MYDIR"
-				ln -s -r "$MATCH" "$base_dir/$MYDIR/$FIRSTFILE" 2>/dev/null
+				ln -s -r "$MATCH" "$base_dir/$FIRSTENTRY" 2>/dev/null
 			fi
 			break
 		fi
-
 	done
+	fi
   done
+
+  if [ -d "$base_dir/sos_commands/foreman/foreman-debug" ]; then
+	ln -s -r $base_dir/var $base_dir/sos_commands/foreman/foreman-debug/var
+  fi
 
 }
 
@@ -810,24 +831,35 @@ report()
   log "// hostname"
   log "---"
   log_cmd "cat $base_dir/hostname"
-  log "---"
-  log
-
-  log "// facts stored in /var/lib/rhsm/facts/facts.json"
-  log "jq '. | \"hostname: \" + .\"network.hostname\",\"FQDN: \" + .\"network.fqdn\"' \$base_dir/var/lib/rhsm/facts/facts.json"
-  log "---"
+# log "---"
+#  log
+#
+#  log "// facts stored in /var/lib/rhsm/facts/facts.json"
+#  log "jq '. | \"hostname: \" + .\"network.hostname\",\"FQDN: \" + .\"network.fqdn\"' \$base_dir/var/lib/rhsm/facts/facts.json"
+#  log "---"
   log_cmd "jq '. | \"hostname: \" + .\"network.hostname\",\"FQDN: \" + .\"network.fqdn\"' $base_dir/var/lib/rhsm/facts/facts.json 2>/dev/null"
-  log "---"
-  log
+#  log "---"
+#  log
 
   if [ "$HOSTS_ENTRY" ]; then
-    log "// hostname in /etc/hosts"
-    log "---"
+#    log "// hostname in /etc/hosts"
+#    log "---"
     log "$HOSTS_ENTRY"
-    log "---"
-    log
+#    log "---"
+#    log
   fi
 
+    log "---"
+    log
+
+  if [ -f "$base_dir/sos_commands/foreman/smart_proxies" ]; then
+        log "// capsule servers"
+        log "grep -v row \$base_dir/sos_commands/foreman/smart_proxies"
+        log "---"
+        log_cmd "grep -v row $base_dir/sos_commands/foreman/smart_proxies"
+        log "---"
+        log
+  fi
 
   log_tee "## Case Summary"
   log
@@ -1091,14 +1123,15 @@ report()
   log
 
   log_tee "## Environment"
+  log
 
-  log "// LANG and PATH
+  log "// LANG and PATH"
   log "egrep 'LANG|PATH' \$base_dir/sos_commands/systemd/systemctl_show-environment"
   log
   log_cmd "egrep 'LANG|PATH' $base_dir/sos_commands/systemd/systemctl_show-environment"
   log
 
-  log "// contents of /etc/environment
+  log "// contents of /etc/environment"
   log "cat \$base_dir/etc/environment"
   log
   log_cmd "cat $base_dir/etc/environment"
@@ -1161,27 +1194,33 @@ report()
   log "---"
   log
 
-  log "// custom cron files in /etc"
+  log "// cron files in /etc"
   log "---"
-  log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}' | egrep -v 'cron.d\/foreman$|cron.d\/rubygem-smart_proxy_openscap$|cron.daily\/logrotate$|cron.daily\/rhsmd$|cron.daily\/man-db.cron$|cron.daily\/katello-repository-publish-check$|cron.deny$|cron.hourly\/0anacron$|crontab$|cron.weekly\/katello-clean-empty-puppet-environments$|cron.weekly\/katello-remove-orphans$|cron.d\/katello$|cron.d\/foreman-tasks$|cron.daily\/mlocate$|cron.weekly\/pulp-maintenance$|cron.d\/0hourly$|cron.daily\/rhsmd$|cron.allow$|cron.d\/raid-check$|cron.d\/sysstat$|cron.daily\/schema-upgrade-notif$|cron.daily\/makewhatis.cron$|cron.daily\/certwatch$|cron.daily\/cups$|cron.daily\/check-database-space-usage.sh$|cron.daily\/prelink$|cron.daily\/mlocate.cron$|cron.daily\/tmpwatch$|cron.daily\/rhn-ssl-cert-check$|cron.daily\/readahead.cron$|cron.hourly\/mcelog.cron$|cron.monthly\/readahead-monthly.cron$|cron.d\/katello-host-tools$|cron.daily\/rpm$|cron.daily\/rhsmd$' | grep ."
-  log "---"
-  log
-
-  log "// standard Satellite 6 cron files in /etc"
-  log "---"
-  export GREP_COLORS='ms=01;33'
-  log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}' | egrep 'cron.d\/foreman$|cron.d\/rubygem-smart_proxy_openscap$|cron.daily\/logrotate$|cron.daily\/rhsmd$|cron.daily\/man-db.cron$|cron.daily\/katello-repository-publish-check$|cron.deny$|cron.hourly\/0anacron$|crontab$|cron.weekly\/katello-clean-empty-puppet-environments$|cron.weekly\/katello-remove-orphans$|cron.d\/katello$|cron.d\/foreman-tasks$|cron.daily\/mlocate$|cron.weekly\/pulp-maintenance$|cron.d\/0hourly$|cron.daily\/rhsmd$|cron.allow$|cron.d\/katello-host-tools' | grep . | egrep --color=always '^|foreman-tasks$'"
-  export GREP_COLORS='ms=01;31'
+  log_cmd "find $base_dir/etc/cron* -type f"
   log "---"
   log
 
-  log "// standard Satellite 5 cron files in /etc"
-  log "---"
-  export GREP_COLORS='ms=01;33'
-  log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}' | egrep 'cron.d\/raid-check$|cron.d\/sysstat$|cron.daily\/schema-upgrade-notif$|cron.daily\/makewhatis.cron$|cron.daily\/certwatch$|cron.daily\/cups$|cron.daily\/check-database-space-usage.sh$|cron.daily\/prelink$|cron.daily\/mlocate.cron$|cron.daily\/tmpwatch$|cron.daily\/rhn-ssl-cert-check$|cron.daily\/readahead.cron$|cron.hourly\/mcelog.cron$|cron.monthly\/readahead-monthly.cron$|cron.daily\/rpm$|cron.daily\/rhsmd$' | grep . | egrep --color=always '^|foreman-tasks$'"
-  export GREP_COLORS='ms=01;31'
-  log "---"
-  log
+  #log "// custom cron files in /etc"
+  #log "---"
+  #log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}' | egrep -v 'cron.d\/foreman$|cron.d\/rubygem-smart_proxy_openscap$|cron.daily\/logrotate$|cron.daily\/rhsmd$|cron.daily\/man-db.cron$|cron.daily\/katello-repository-publish-check$|cron.deny$|cron.hourly\/0anacron$|crontab$|cron.weekly\/katello-clean-empty-puppet-environments$|cron.weekly\/katello-remove-orphans$|cron.d\/katello$|cron.d\/foreman-tasks$|cron.daily\/mlocate$|cron.weekly\/pulp-maintenance$|cron.d\/0hourly$|cron.daily\/rhsmd$|cron.allow$|cron.d\/raid-check$|cron.d\/sysstat$|cron.daily\/schema-upgrade-notif$|cron.daily\/makewhatis.cron$|cron.daily\/certwatch$|cron.daily\/cups$|cron.daily\/check-database-space-usage.sh$|cron.daily\/prelink$|cron.daily\/mlocate.cron$|cron.daily\/tmpwatch$|cron.daily\/rhn-ssl-cert-check$|cron.daily\/readahead.cron$|cron.hourly\/mcelog.cron$|cron.monthly\/readahead-monthly.cron$|cron.d\/katello-host-tools$|cron.daily\/rpm$|cron.daily\/rhsmd$' | grep ."
+  #log "---"
+  #log
+
+  #log "// standard Satellite 6 cron files in /etc"
+  #log "---"
+  #export GREP_COLORS='ms=01;33'
+  #log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}' | egrep 'cron.d\/foreman$|cron.d\/rubygem-smart_proxy_openscap$|cron.daily\/logrotate$|cron.daily\/rhsmd$|cron.daily\/man-db.cron$|cron.daily\/katello-repository-publish-check$|cron.deny$|cron.hourly\/0anacron$|crontab$|cron.weekly\/katello-clean-empty-puppet-environments$|cron.weekly\/katello-remove-orphans$|cron.d\/katello$|cron.d\/foreman-tasks$|cron.daily\/mlocate$|cron.weekly\/pulp-maintenance$|cron.d\/0hourly$|cron.daily\/rhsmd$|cron.allow$|cron.d\/katello-host-tools' | grep . | egrep --color=always '^|foreman-tasks$'"
+  #export GREP_COLORS='ms=01;31'
+  #log "---"
+  #log
+
+  #log "// standard Satellite 5 cron files in /etc"
+  #log "---"
+  #export GREP_COLORS='ms=01;33'
+  #log_cmd "find $base_dir/etc/cron* -type f | awk 'FS=\"/etc/\" {print \$2}' | egrep 'cron.d\/raid-check$|cron.d\/sysstat$|cron.daily\/schema-upgrade-notif$|cron.daily\/makewhatis.cron$|cron.daily\/certwatch$|cron.daily\/cups$|cron.daily\/check-database-space-usage.sh$|cron.daily\/prelink$|cron.daily\/mlocate.cron$|cron.daily\/tmpwatch$|cron.daily\/rhn-ssl-cert-check$|cron.daily\/readahead.cron$|cron.hourly\/mcelog.cron$|cron.monthly\/readahead-monthly.cron$|cron.daily\/rpm$|cron.daily\/rhsmd$' | grep . | egrep --color=always '^|foreman-tasks$'"
+  #export GREP_COLORS='ms=01;31'
+  #log "---"
+  #log
 
   log "// last 20 entries from foreman/cron.log"
   log "tail -20 \$base_foreman/var/log/foreman/cron.log"
@@ -1236,9 +1275,9 @@ report()
 
 
   log "// yum history"
-  log "cat \$base_dir/sos_commands/yum/yum_history"
+  log "grep . \$base_dir/sos_commands/yum/yum_history | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -s \"[:blank:]\""
   log "---"
-  log_cmd "cat $base_dir/sos_commands/yum/yum_history | egrep -i --color=always \"^|$SATPACKAGES\""
+  log_cmd "grep . $base_dir/sos_commands/yum/yum_history | sed 's/^[ \t]*//;s/[ \t]*$//' | egrep -i --color=always \"^|$SATPACKAGES\" | tr -s \"[:blank:]\""
   log "---"
   log
 
@@ -1258,7 +1297,8 @@ report()
   log "---"
 
   export GREP_COLORS='ms=01;33'
-  cmd_output=`egrep -i "Exit with status code|--upgrade|Upgrade completed|Running installer with args|ASCII" $base_dir/var/log/foreman-installer/{satellite*,capsule*} $base_dir/var/log/foreman-maintain/{satellite*,capsule*,foreman-maintain*} $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/{satellite*,capsule*} $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-maintain/{satellite*,capsule*} $base_dir/var/log/katello-installer/* 2>/dev/null | egrep -v "Hook" | sed s'/\[\[//'g | awk -F"[" '{print $2}' | sort -k 2 | tail | egrep --color=always "^|tuning|upgrade"`
+  #cmd_output=`egrep -i "Exit with status code|--upgrade|Upgrade completed|Running installer with args|ASCII" $base_dir/var/log/foreman-installer/{satellite*,capsule*} $base_dir/var/log/foreman-maintain/{satellite*,capsule*,foreman-maintain*} $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/{satellite*,capsule*} $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-maintain/{satellite*,capsule*} $base_dir/var/log/katello-installer/* 2>/dev/null | egrep -v "Hook" | sed s'/\[\[//'g | awk -F"[" '{print $2}' | sort -k 2 | tail | egrep --color=always "^|tuning|upgrade"`
+  cmd_output=`egrep -i "Exit with status code|--upgrade|Upgrade completed|Running installer with args|ASCII" $base_foreman/var/log/foreman-installer/{satellite*,capsule*} $base_dir/var/log/foreman-maintain/{satellite*,capsule*,foreman-maintain*} $base_dir/var/log/katello-installer/* 2>/dev/null | egrep -v "Hook" | sed s'/\[\[//'g | awk -F"[" '{print $2}' | sort -k 2 | tail | egrep --color=always "^|tuning|upgrade"`
 
   log "$cmd_output"
   export GREP_COLORS='ms=01;31'
@@ -1392,7 +1432,7 @@ report()
   log "// condensed satellite service status"
   log "grepping files foreman-maintain_service_status and systemctl_list-units"
   log "---"
-  log_cmd "cat \$base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '\r' '\n' | egrep \"^$|\.service -|Active:|All services\" | egrep --color=always '^|failed|inactive|activating|deactivating|\[OK\]'"
+  log_cmd "cat $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '\r' '\n' | egrep \"^$|\.service -|Active:|All services\" | egrep --color=always '^|failed|inactive|activating|deactivating|\[OK\]'"
   log
   log_cmd "egrep 'puppet|virt-who' $base_dir/sos_commands/systemd/systemctl_list-units | egrep --color=always '^|failed|inactive|activating|deactivating'"
   log "---"
@@ -1459,120 +1499,176 @@ report()
 	log "---"
 	log
 
-	log "// Current Configuration"
-	#log "grep -v -h \# \$base_foreman/var/lib/pgsql/data/postgresql.conf \$base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
-	log "grep -v -h \# \$base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
-	log "grep -v -h \# \$base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
-	log "---"
-	#log_cmd "grep -v -h \# $base_foreman/var/lib/pgsql/data/postgresql.conf $base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
-	log_cmd "grep -v -h \# $base_foreman/var/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
-	log
-	log_cmd "grep -v -h \# $base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf 2>/dev/null | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
-	log "---"
-	log
-
-	log "// postgres configuration"
-	#log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_dir/var/lib/pgsql/data/postgresql.conf \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | grep -v '^#'"
-	log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_dir/var/lib/pgsql/data/postgresql.conf | grep -v '^#'"
-	log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | grep -v '^#'"
-	log "---"
-	#log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_dir/var/lib/pgsql/data/postgresql.conf $base_foreman/var/opt/rh/rh-postgresql12//lib/pgsql/data/postgresql.conf | grep -v '^#'"
-	log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_dir/var/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v '^#'"
-	log
-	log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v '^#'"
-	log "---"
-	log
-
-	log "// postgres storage consumption"
-	log "cat \$base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql \$base_dir/sos_commands/postgresql/du_-sh_.var..opt.rh.rh-postgresql12.lib.pgsql"
-	log "---"
-	log_cmd "cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql $base_dir/sos_commands/postgresql/du_-sh_.var..opt.rh.rh-postgresql12.lib.pgsql 2>/dev/null"
-	log "---"
-	log
-
-	log "// top foreman tables consumption"
-	#log "head -n30 \$base_dir/sos_commands/katello/db_table_size \$base_dir/sos_commands/foreman/foreman_db_tables_sizes"
-	log "head -n30 \$base_dir/sos_commands/katello/db_table_size"
-	log "head -n30 \$base_dir/sos_commands/foreman/foreman_db_tables_sizes"
-	log "---"
-	#log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size $base_dir/sos_commands/foreman/foreman_db_tables_sizes 2>/dev/null"
-	log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size 2>/dev/null"
-	log
-	log_cmd "head -n30 $base_dir/sos_commands/foreman/foreman_db_tables_sizes 2>/dev/null"
-	log "---"
-	log
-
-	log "// postgres idle process (everything)"
-	log "grep ^postgres \$base_dir/ps | grep idle$ | wc -l"
-	log "---"
-	log_cmd "grep ^postgres $base_dir/ps | grep idle$ | wc -l"
-	log "---"
-	log
-
-        log "// deadlocks (pre-Sat 6.8)"
-        log "grep -h -i deadlock \$base_foreman/var/lib/pgsql/data/pg_log/*.log"
+        log "// postgres idle process (everything)"
+        log "grep ^postgres \$base_dir/ps | grep idle$ | wc -l"
         log "---"
-        log_cmd "grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+        log_cmd "grep ^postgres $base_dir/ps | grep idle$ | wc -l"
         log "---"
         log
-
-        log "// deadlocks (Sat 6.8 or higher)"
-        log "grep -h -i deadlock \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
-        log "---"
-        log_cmd "grep -h -i deadlock $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
-        log "---"
-        log
-
-	log "// deadlock count (pre-Sat 6.8)"
-	log "grep -h -i deadlock \$base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-	log "---"
-	log_cmd "grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-	log "---"
-	log
-
-        log "// deadlock count (Sat 6.8 or higher)"
-        log "grep -h -i deadlock \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
-        log "---"
-        log_cmd "grep -h -i deadlock $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
-        log "---"
-        log
-
-
-
-	log "// ERROR count (pre-Sat 6.8)"
-	log "grep -h -i ERROR \$base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-	log "---"
-	log_cmd "grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-	log "---"
-	log
-
-	log "// ERROR (pre-Sat 6.8)"
-	log "grep -h -i ERROR \$base_foreman/var/lib/pgsql/data/pg_log/*.log"
-	log "---"
-	log_cmd "grep -h ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | tail -100"
-	log "---"
-	log
-
-        log "// ERROR count (Sat 6.8 or higher)"
-	log "grep -h -i ERROR \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
-        log "---"
-	log_cmd "grep -h -i ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
-        log "---"
-        log
-
-        log "// ERROR (Sat 6.8 or higher)"
-	log "grep -h -i ERROR \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
-        log "---"
-	log_cmd "grep -h -i ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | tail -100"
-        log "---"
-        log
-
 
         log "// hugepages tuning settings"
         log "---"
         log_cmd "grep hugepages $base_dir/etc/default/grub;if [ \"`grep hugepages $base_dir/etc/tuned/* 2>/dev/null`\"]; then echo; grep hugepages $base_dir/etc/tuned/* 2>/dev/null; echo active tuned profile; cat $base_dir/sos_commands/tuned/tuned-adm_active; fi"
         log "---"
         log
+
+	log "// pre-Satellite 6.8"
+	log
+
+        log "// Current Configuration"
+        #log "grep -v -h \# \$base_foreman/var/lib/pgsql/data/postgresql.conf \$base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        log "grep -v -h \# \$base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        #log "grep -v -h \# \$base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        log "---"
+        #log_cmd "grep -v -h \# $base_foreman/var/lib/pgsql/data/postgresql.conf $base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        log_cmd "grep -v -h \# $base_foreman/var/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        #log
+        #log_cmd "grep -v -h \# $base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf 2>/dev/null | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        log "---"
+        log
+
+        log "// postgres configuration"
+        #log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_dir/var/lib/pgsql/data/postgresql.conf \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_dir/var/lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        #log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        log "---"
+        #log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_dir/var/lib/pgsql/data/postgresql.conf $base_foreman/var/opt/rh/rh-postgresql12//lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_dir/var/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v '^#'"
+        log
+        #log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v '^#'"
+        log "---"
+        log
+
+        log "// postgres storage consumption"
+        log "cat \$base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
+        log "---"
+        log_cmd "cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
+        log "---"
+        log
+
+        log "// top foreman tables consumption"
+        #log "head -n30 \$base_dir/sos_commands/katello/db_table_size \$base_dir/sos_commands/foreman/foreman_db_tables_sizes"
+        log "head -n30 \$base_dir/sos_commands/katello/db_table_size"
+        #log "head -n30 \$base_dir/sos_commands/foreman/foreman_db_tables_sizes"
+        log "---"
+        #log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size $base_dir/sos_commands/foreman/foreman_db_tables_sizes 2>/dev/null"
+        log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size 2>/dev/null"
+        #log
+        #log_cmd "head -n30 $base_dir/sos_commands/foreman/foreman_db_tables_sizes 2>/dev/null"
+        log "---"
+        log
+
+        log "// deadlocks"
+        log "grep -h -i deadlock \$base_foreman/var/lib/pgsql/data/pg_log/*.log"
+        log "---"
+        log_cmd "grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+        log "---"
+        log
+
+        log "// deadlock count"
+        log "grep -h -i deadlock \$base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
+        log "---"
+        log_cmd "grep -h -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
+        log "---"
+        log
+
+        log "// ERROR count"
+        log "grep -h -i ERROR \$base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
+        log "---"
+        log_cmd "grep ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
+        log "---"
+        log
+
+        log "// ERRORs"
+        log "grep -h -i ERROR \$base_foreman/var/lib/pgsql/data/pg_log/*.log"
+        log "---"
+        log_cmd "grep -h ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | tail -100"
+        log "---"
+        log
+
+	log
+        log "// Satellite 6.8 or later"
+        log
+
+        log "// Current Configuration"
+        #log "grep -v -h \# \$base_foreman/var/lib/pgsql/data/postgresql.conf \$base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        #log "grep -v -h \# \$base_foreman/var/lib/pgsql/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        log "grep -v -h \# \$base_dir/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        log "---"
+        #log_cmd "grep -v -h \# $base_foreman/var/lib/pgsql/data/postgresql.conf $base_foreman/var/opt/rh/rh-postgresql12/data/postgresql.conf | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        #log_cmd "grep -v -h \# $base_foreman/var/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        #log
+        log_cmd "grep -v -h \# $base_dir/var/opt/rh/rh-postgresql12/data/postgresql.conf 2>/dev/null | grep -v ^$ | grep -v -P ^\"\\t\\t\".*#"
+        log "---"
+        log
+
+        log "// postgres configuration"
+        #log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_dir/var/lib/pgsql/data/postgresql.conf \$base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        #log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_dir/var/lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        log "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' \$base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        log "---"
+        #log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_dir/var/lib/pgsql/data/postgresql.conf $base_foreman/var/opt/rh/rh-postgresql12//lib/pgsql/data/postgresql.conf | grep -v '^#'"
+        #log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_dir/var/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v '^#'"
+        #log
+        log_cmd "grep -h 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' $base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf 2>/dev/null | grep -v '^#'"
+        log "---"
+        log
+
+        log "// postgres storage consumption"
+        log "cat \$base_dir/sos_commands/postgresql/du_-sh_.var..opt.rh.rh-postgresql12.lib.pgsql"
+        log "---"
+        log_cmd "cat $base_dir/sos_commands/postgresql/du_-sh_.var..opt.rh.rh-postgresql12.lib.pgsql"
+        log "---"
+        log
+
+        log "// top foreman tables consumption"
+        #log "head -n30 \$base_dir/sos_commands/katello/db_table_size \$base_dir/sos_commands/foreman/foreman_db_tables_sizes"
+        #log "head -n30 \$base_dir/sos_commands/katello/db_table_size"
+        log "head -n30 \$base_dir/sos_commands/foreman/foreman_db_tables_sizes"
+        log "---"
+        #log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size $base_dir/sos_commands/foreman/foreman_db_tables_sizes 2>/dev/null"
+        #log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size 2>/dev/null"
+        #log
+        log_cmd "head -n30 $base_dir/sos_commands/foreman/foreman_db_tables_sizes 2>/dev/null"
+        log "---"
+        log
+
+        log "// top candlepin tables consumption"
+        log "head -n30 \$base_dir/sos_commands/candlepin/candlepin_db_tables_sizes"
+        log "---"
+        log_cmd "head -n30 $base_dir/sos_commands/candlepin/candlepin_db_tables_sizes 2>/dev/null"
+        log "---"
+        log
+
+        log "// deadlocks"
+        log "grep -h -i deadlock \$base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
+        log "---"
+        log_cmd "grep -h -i deadlock $base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
+        log "---"
+        log
+
+        log "// deadlock count"
+        log "grep -h -i deadlock \$base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
+        log "---"
+        log_cmd "grep -h -i deadlock $base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
+        log "---"
+        log
+
+        log "// ERROR count"
+        log "grep -h -i ERROR \$base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
+        log "---"
+        log_cmd "grep -h -i ERROR $base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | wc -l"
+        log "---"
+        log
+
+        log "// ERRORs"
+        log "grep -h -i ERROR \$base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
+        log "---"
+        log_cmd "grep -h -i ERROR $base_dir/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log | tail -100"
+        log "---"
+        log
+
+
 
   fi
 
@@ -1611,7 +1707,7 @@ report()
 	log
 
 
-	  if [ -f "$base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space" ]; then
+	  if [ -f "$base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space 2>/dev/null" ]; then
 		  log "// mongodb storage consumption"
 		  log "cat \$base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space"
 		  log "---"
@@ -1922,7 +2018,7 @@ report()
   log_tee "## Katello"
   log
 
-  if [ ! -f "$base_dir/sos_commands/katello/qpid-stat_-q*" ] && [ ! -f "$base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf" ]; then
+  if [ ! -d "$base_dir/sos_commands/katello" ] && [ ! -f "$base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf" ]; then
 
 	log "katello server not found"
 	log
@@ -1933,9 +2029,9 @@ report()
     log
 
 	log "// katello_event_queue (foreman-tasks / dynflow is running?)"
-	log "grep -E '(  queue|  ===|katello_event_queue)' \$base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
+	log "grep -E -h '(  queue|  ===|katello_event_queue)' \$base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671i \$base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 2>/dev/null"
 	log "---"
-	log_cmd "grep -E '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
+	log_cmd "grep -E -h '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 $base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 2>/dev/null"
 	log "---"
 	log
 
@@ -1969,24 +2065,10 @@ report()
 	log "---"
 	log
 
-	log "// number of running dynflow executors"
+	log "// number of running dynflow executors (pre-6.8)"
 	log "grep dynflow_executor\$ \$base_dir/ps"
 	log "---"
 	log_cmd "grep dynflow_executor\$ $base_dir/ps"
-	log "---"
-	log
-
-	log "// dynflow optimizations - 6.3 or less"
-	log "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" \$base_dir/etc/sysconfig/foreman-tasks"
-	log "---"
-	log_cmd "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" $base_dir/etc/sysconfig/foreman-tasks"
-	log "---"
-	log
-
-	log "// dynflow optimizations - 6.4 through 6.7"
-	log "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" \$base_dir/etc/sysconfig/dynflowd"
-	log "---"
-	log_cmd "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" $base_dir/etc/sysconfig/dynflowd"
 	log "---"
 	log
 
@@ -1997,26 +2079,47 @@ report()
 	log "---"
 	log
 
-	log "// foreman-tasks/dynflow configuration - 6.3 or less"
-	log "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' \$base_dir/etc/sysconfig/foreman-tasks"
-	log "---"
-	log_cmd "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' $base_dir/etc/sysconfig/foreman-tasks"
-	log "---"
-	log
 
-	log "// foreman-tasks/dynflow configuration - 6.4 through 6.7"
-	log "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' $base_dir/etc/sysconfig/dynflowd"
-	log "---"
-	log_cmd "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' $base_dir/etc/sysconfig/dynflowd"
-	log "---"
-	log
+        log "// 6.3 or lower"
 
-        log "// dynflow configuration - 6.8 or higher"
+        log "// dynflow optimizations"
+        log "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" \$base_dir/etc/sysconfig/foreman-tasks"
+        log "---"
+        log_cmd "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" $base_dir/etc/sysconfig/foreman-tasks"
+        log "---"
+        log
+
+        log "// foreman-tasks/dynflow configuration"
+        log "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' \$base_dir/etc/sysconfig/foreman-tasks"
+        log "---"
+        log_cmd "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' $base_dir/etc/sysconfig/foreman-tasks"
+        log "---"
+        log
+
+        log "// 6.4 through 6.7"
+
+        log "// dynflow optimizations"
+        log "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" \$base_dir/etc/sysconfig/dynflowd"
+        log "---"
+        log_cmd "egrep \"EXECUTORS_COUNT|MALLOC_ARENA_MAX\" $base_dir/etc/sysconfig/dynflowd"
+        log "---"
+        log
+
+        log "// foreman-tasks/dynflow configuration"
+        log "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' $base_dir/etc/sysconfig/dynflowd"
+        log "---"
+        log_cmd "grep 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL' $base_dir/etc/sysconfig/dynflowd"
+        log "---"
+        log
+
+        log "// 6.8 or higher"
+
+        log "// dynflow configuration"
         log "cat \$base_dir/etc/foreman/dynflow/worker.yml"
-	log "cat \$base_dir/etc/foreman/dynflow/worker-hosts-queue.yml"
+        log "cat \$base_dir/etc/foreman/dynflow/worker-hosts-queue.yml"
         log "---"
         log_cmd "cat $base_dir/etc/foreman/dynflow/worker.yml"
-	log_cmd "cat $base_dir/etc/foreman/dynflow/worker-hosts-queue.yml"
+        log_cmd "cat $base_dir/etc/foreman/dynflow/worker-hosts-queue.yml"
         log "---"
         log
 
@@ -2080,17 +2183,19 @@ report()
 	log
 
 	log "// Total number of pulp agents"
-	log "grep pulp.agent \$base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 | wc -l"
+	log "grep pulp.agent \$base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 \$base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 2>/dev/null | wc -l"
 	log "---"
-	log_cmd "grep pulp.agent $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 | wc -l"
+	log_cmd "grep pulp.agent $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 $base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 2>/dev/null | wc -l"
 	log "---"
 	log
 
 	log "// Total number of (active) pulp agents"
-	cmd="grep pulp.agent $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 | grep \" 1.*1\$\""
-	log "$cmd"
+	#ACTIVEPULP=`grep pulp.agent $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 $base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 2>/dev/null | grep \" 1.*1\$\"`
+	#log "$ACTIVEPULP"
+	log "grep pulp.agent \$base_dir/sos_commands/katello/qpid-stat_-q* \$base_dir/sos_commands/pulp/qpid-stat_-q* 2>/dev/null | grep \" 1.*1\$\""
 	log "---"
-	if "$cmd" ]; then log_cmd "$cmd | wc -l"; fi
+	#if [ "$ACTIVEPULP" ] ]; then log_cmd "wc -l $ACTIVEPULP"; fi
+	log_cmd "grep pulp.agent $base_dir/sos_commands/katello/qpid-stat_-q* $base_dir/sos_commands/pulp/qpid-stat_-q* 2>/dev/null | grep \" 1.*1\$\""
 	log "---"
 	log
 
