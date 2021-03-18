@@ -83,6 +83,18 @@ log_cmd()
   echo "$@" | bash &>> $FOREMAN_REPORT
 }
 
+# ref: https://unix.stackexchange.com/questions/44040/a-standard-tool-to-convert-a-byte-count-into-human-kib-mib-etc-like-du-ls1
+# Converts bytes value to human-readable string [$1: bytes value]
+bytesToHumanReadable() {
+    local i=${1:-0} d="" s=0 S=("Bytes" "KiB" "MiB" "GiB" "TiB" "PiB" "EiB" "YiB" "ZiB")
+    while ((i > 1024 && s < ${#S[@]}-1)); do
+        printf -v d ".%02d" $((i % 1024 * 100 / 1024))
+        i=$((i / 1024))
+        s=$((s + 1))
+    done
+    echo "$i$d ${S[$s]}"
+}
+
 
 # The CSVLINKS variable contains files to which we want to link, along with alternate filenames found in older sosreport versions, foreman-debug files and satellite-debug files.
 
