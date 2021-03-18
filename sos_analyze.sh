@@ -2494,6 +2494,16 @@ report()
 	log "---"
 	log
 
+        log "// Insert qpidd information"
+        log "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | egrep \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc"
+        log "---"
+        log_cmd "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | egrep \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc | awk '{print \"bytes: \"\$1}'"
+        fullsize_var_lib_qpid=$(cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | egrep " [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} " | awk '{print $5}' | paste -s -d+ | bc)
+        size_var_lib_qpid=$(bytesToHumanReadable ${fullsize_var_lib_qpid})
+        log "size: ${size_var_lib_qpid}"
+        log "---"
+        log
+
 	log "// qpidd limits"
 	log "grep LimitNOFILE \$base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf"
 	log "---"
