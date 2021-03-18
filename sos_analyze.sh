@@ -751,7 +751,12 @@ consolidate_differences()
   done
 
   if [ -d "$base_dir/sos_commands/foreman/foreman-debug" ]; then
-	ln -s -r $base_dir/var $base_dir/sos_commands/foreman/foreman-debug/var
+	if [ ! -d "$base_dir/sos_commands/foreman/foreman-debug/var" ] && [ -d "$base_dir/var" ]; then
+		ln -s -r $base_dir/var $base_dir/sos_commands/foreman/foreman-debug/var
+	fi
+        if [ ! -d "$base_dir/sos_commands/foreman/foreman-debug/etc" ] && [ -d "$base_dir/etc" ]; then
+                ln -s -r $base_dir/etc $base_dir/sos_commands/foreman/foreman-debug/etc
+        fi
   fi
 
 }
@@ -1449,7 +1454,7 @@ report()
 
 
 
-  if [ ! "`egrep -i 'gofer|katello-agent' $base_dir/sos_commands/systemd/systemctl_show_service_--all $base_dir/sos_commands/foreman/foreman-maintain_service_status $base_dir/installed_rpms $base_dir/ps 2>/dev/null | head -1`" ]; then
+  if [ ! "`egrep -i 'gofer|katello-agent' $base_dir/sos_commands/systemd/systemctl_show_service_--all $base_dir/installed_rpms 2>/dev/null | head -1`" ]; then
 
 	nop=1
 
@@ -1459,9 +1464,11 @@ report()
 	log
 
 	log "// goferd service"
-	log "from file $base_dir/sos_commands/systemd/systemctl_list-units"
+	#log "from file $base_dir/sos_commands/systemd/systemctl_list-units"
+	log "from file \$base_dir/sos_commands/systemd/systemctl_show_service_--all"
 	log "---"
-	log_cmd "grep goferd $base_dir/sos_commands/systemd/systemctl_list-units"
+	#log_cmd "grep goferd $base_dir/sos_commands/systemd/systemctl_list-units"
+	log_cmd "grep goferd $base_dir/sos_commands/systemd/systemctl_show_service_--all"
 	log "---"
 	log
 
