@@ -242,9 +242,9 @@ report()
   log "// Last flag used with satellite-installer"
 
   if [ "$sos_version" == "old" ];then
-    cmd="grep \"Running installer with args\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
+    cmd="egrep \"Running installer with args|signal was\" $base_dir/sos_commands/foreman/foreman-debug/var/log/foreman-installer/satellite.log"
   else
-    cmd="grep \"Running installer with args\" $base_dir/var/log/foreman-installer/satellite.log"
+    cmd="egrep \"Running installer with args|signal was\" $base_dir/var/log/foreman-installer/satellite.log"
   fi
 
   log "$cmd"
