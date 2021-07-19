@@ -8,6 +8,30 @@
 
 FOREMAN_REPORT="/tmp/$$.log"
 
+# the following while block captures three flags from the command line
+# -c copies the output file from the /tmp directory to the current directory
+# -l opens the output file from the current directory
+# -t opens the output file from the /tmp directory
+
+while getopts "clt" opt "${NULL[@]}"; do
+ case $opt in
+    c )
+    COPY_TO_CURRENT_DIR=true
+    ;;
+   l )   # open copy from local directory.  Requires option 'c' above.
+   OPEN_IN_VIM_RO_LOCAL_DIR=true
+   ;;
+   t )   # open copy from /tmp/directory
+   OPEN_IN_EDITOR_TMP_DIR=true
+   ;;
+    \? )
+    ;;
+ esac
+done
+shift "$(($OPTIND -1))"
+
+MYPWD=`pwd`
+
 main()
 {
   > $FOREMAN_REPORT
@@ -1298,6 +1322,12 @@ report()
     echo "done."
   fi
 
+
+  if [ $COPY_TO_CURRENT_DIR ] || [ $OPEN_IN_VIM_RO_LOCAL_DIR ]; then
+    cp -v $FOREMAN_REPORT $MYPWD/report_${USER}_$final_name.log
+  fi
+
+
   mv $FOREMAN_REPORT /tmp/report_${USER}_$final_name.log
   echo 
   echo
@@ -1317,3 +1347,19 @@ if [ "$1" == "" ]; then
 fi
 
 main $1
+
+# the following code will open the requested report
+# in the user's editor of choice
+# if none is defined, "less" will be chosen.
+
+if [ ! "$EDITOR" ]; then
+   EDITOR=`which less`
+fi
+
+if [ $OPEN_IN_VIM_RO_LOCAL_DIR ]; then
+   $EDITOR -R $MYPWD/report_${USER}_$final_name.log
+fi
+
+if [ $OPEN_IN_EDITOR_TMP_DIR ]; then
+   $EDITOR /tmp/report_${USER}_$final_name.log
+fi
