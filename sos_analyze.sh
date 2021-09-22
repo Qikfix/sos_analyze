@@ -118,9 +118,9 @@ report()
   log
 
   log "// baremetal or vm?"
-  log "cat $base_dir/dmidecode | $GREP '(Vendor|Manufacture)' | head -n3"
+  log "cat $base_dir/dmidecode | $EGREP '(Vendor|Manufacture)' | head -n3"
   log "---"
-  log_cmd "cat $base_dir/dmidecode | $GREP '(Vendor|Manufacture)' | head -n3"
+  log_cmd "cat $base_dir/dmidecode | $EGREP '(Vendor|Manufacture)' | head -n3"
   log "---"
   log
 
@@ -190,14 +190,14 @@ report()
   log
 
   log "// installed katello-agent and/or gofer"
-  log "$GREP '(^katello-agent|^gofer)' $base_dir/installed-rpms"
+  log "$EGREP '(^katello-agent|^gofer)' $base_dir/installed-rpms"
   log "---"
-  log_cmd "$GREP '(^katello-agent|^gofer)' $base_dir/installed-rpms"
+  log_cmd "$EGREP '(^katello-agent|^gofer)' $base_dir/installed-rpms"
   log "---"
   log
 
   log "// goferd service"
-  log "$GREP '(^katello-agent|^gofer)' $base_dir/installed-rpms"
+  log "$EGREP '(^katello-agent|^gofer)' $base_dir/installed-rpms"
   log "cat $base_dir/sos_commands/systemd/systemctl_list-units | $GREP goferd"
   log "---"
   log_cmd "cat $base_dir/sos_commands/systemd/systemctl_list-units | $GREP goferd"
@@ -530,9 +530,9 @@ report()
 #grep "\"task_id\"" 02681559/0050-sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf.tar.xz/sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf/sos_commands/pulp/pulp-running_tasks | wc -l
 
   log "// pulp task not finished"
-  log "$GREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+  log "$EGREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
   log "---"
-  log_cmd "$GREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+  log_cmd "$EGREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
   log "---"
   log
 
@@ -578,9 +578,9 @@ report()
   log "// katello-service status output - condensed"
 
   if [ "$sos_version" == "old" ];then
-    cmd="$GREP '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-debug/katello_service_status | tr '^\*' '\n'"
+    cmd="$EGREP '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-debug/katello_service_status | tr '^\*' '\n'"
   else
-    cmd="$GREP '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '^\*' '\n'"
+    cmd="$EGREP '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '^\*' '\n'"
   fi
 
   log "$cmd"
@@ -707,9 +707,9 @@ report()
   log "// katello_event_queue (foreman-tasks / dynflow is running?)"
 
   if [ "$sos_version" == "old" ];then
-    cmd="$GREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
+    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
   else
-    cmd="$GREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/katello/$qpid_filename"
+    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/katello/$qpid_filename"
   fi
 
   log "$cmd"
@@ -751,6 +751,7 @@ report()
   log_tee "## Foreman logs (error)"
   log
 
+  # Note: `grep -I` differs from `rg -I` but the difference in behavior is not causing differences in output here. So I'm leaving `$GREP -I`.
   log "// total number of errors found on production.log - TOP 40"
   log "$GREP -I -F \"[E\" $base_foreman/var/log/foreman/production.log* | awk '{print \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13}' | sort | uniq -c | sort -nr | head -n40"
   log "---"
@@ -852,9 +853,9 @@ report()
   log
 
   log "// Satellite Proxy"
-  log "$GREP '(^  proxy_url|^  proxy_port|^  proxy_username|^  proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml"
+  log "$EGREP '(^  proxy_url|^  proxy_port|^  proxy_username|^  proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml"
   log "---"
-  log_cmd "$GREP '(^  proxy_url|^  proxy_port|^  proxy_username|^  proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml"
+  log_cmd "$EGREP '(^  proxy_url|^  proxy_port|^  proxy_username|^  proxy_password)' $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml"
   log "---"
   log
 
@@ -965,9 +966,9 @@ report()
   log "// latest 30 hypervisors tasks"
 
   if [ "$sos_version" == "old" ];then
-    cmd="cat $base_foreman/foreman_tasks_tasks.csv | $GREP '(^                  id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d\| -f3,4,5,6,7"
+    cmd="cat $base_foreman/foreman_tasks_tasks.csv | $EGREP '(^                  id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d\| -f3,4,5,6,7"
   else
-    cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | $GREP '(^                  id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d\| -f3,4,5,6,7"
+    cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | $EGREP '(^                  id|Hypervisors)' | sed -e 's/,/ /g' | sort -rk6 | head -n 30 | cut -d\| -f3,4,5,6,7"
   fi
 
   log "$cmd"
@@ -1129,72 +1130,72 @@ report()
   log
 
   log "// prefork.conf configuration"
-  log "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $GREP 'ServerLimit\|StartServers'"
+  log "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
   log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $GREP 'ServerLimit\|StartServers'"
+  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
   log "---"
   log
 
   log "// 05-foreman.conf configuration"
-  log "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | $GREP 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'"
   log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | $GREP 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'"
   log "---"
   log
 
   log "// 05-foreman-ssl.conf configuration"
-  log "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | $GREP 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'"
   log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | $GREP 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout\|PassengerMinInstances'"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'"
   log "---"
   log
 
   log "// katello.conf configuration"
-  log "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | $GREP 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout'"
+  log "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout'"
   log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | $GREP 'KeepAlive\b\|MaxKeepAliveRequests\|KeepAliveTimeout'"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout'"
   log "---"
   log
 
   log "// passenger.conf configuration - 6.3 or less"
-  log "cat $base_dir/etc/httpd/conf.d/passenger.conf | $GREP 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
   log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.d/passenger.conf | $GREP 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log_cmd "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
   log "---"
   log
 
   log "// passenger-extra.conf configuration - 6.4+"
-  log "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $GREP 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
   log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $GREP 'MaxPoolSize\|PassengerMaxRequestQueueSize'"
+  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
   log "---"
   log
 
   log "// pulp_workers configuration"
-  log "cat $base_dir/etc/default/pulp_workers | $GREP '^PULP_MAX_TASKS_PER_CHILD\|^PULP_CONCURRENCY'"
+  log "cat $base_dir/etc/default/pulp_workers | $EGREP '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'"
   log "---"
-  log_cmd "cat $base_dir/etc/default/pulp_workers | $GREP '^PULP_MAX_TASKS_PER_CHILD\|^PULP_CONCURRENCY'"
+  log_cmd "cat $base_dir/etc/default/pulp_workers | $EGREP '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'"
   log "---"
   log
 
   log "// foreman-tasks/dynflow configuration - 6.3 or less"
-  log "cat $base_dir/etc/sysconfig/foreman-tasks | $GREP 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
   log "---"
-  log_cmd "cat $base_dir/etc/sysconfig/foreman-tasks | $GREP 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log_cmd "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
   log "---"
   log
 
   log "// foreman-tasks/dynflow configuration - 6.4+"
-  log "cat $base_dir/etc/sysconfig/dynflowd | $GREP 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
   log "---"
-  log_cmd "cat $base_dir/etc/sysconfig/dynflowd | $GREP 'EXECUTOR_MEMORY_LIMIT\|EXECUTOR_MEMORY_MONITOR_DELAY\|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+  log_cmd "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
   log "---"
   log
 
   log "// postgres configuration"
-  log "cat $base_dir/var/lib/pgsql/data/postgresql.conf | $GREP 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' | $GREP -v '^#'"
+  log "cat $base_dir/var/lib/pgsql/data/postgresql.conf | $EGREP 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | $GREP -v '^#'"
   log "---"
-  log_cmd "cat $base_dir/var/lib/pgsql/data/postgresql.conf | $GREP 'max_connections\|shared_buffers\|work_mem\|checkpoint_segments\|checkpoint_completion_target' | $GREP -v '^#'"
+  log_cmd "cat $base_dir/var/lib/pgsql/data/postgresql.conf | $EGREP 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | $GREP -v '^#'"
   log "---"
   log
 
