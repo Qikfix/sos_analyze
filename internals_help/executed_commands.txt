@@ -112,10 +112,10 @@ $GREP -o denied.* $base_dir/var/log/audit/audit.log | sort -u
 cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space
 
 ## PostgreSQL Storage
-cmd="cat $base_dir/sos_commands/foreman/foreman-debug/postgres_disk_space"
-cmd="cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
-
-head -n30 $base_dir/sos_commands/katello/db_table_size
+cat $base_dir/ps | grep postgres | grep data
+cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql
+cat $base_dir/sos_commands/postgresql/du_-sh_.var..opt.rh.rh-postgresql12.lib.pgsql
+head -n30 $base_dir/sos_commands/foreman/foreman_db_tables_sizes
 
 ## Passenger
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool"

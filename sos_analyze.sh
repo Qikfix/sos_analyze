@@ -626,28 +626,33 @@ report()
   log_tee "## PostgreSQL Storage"
   log
 
-  log "// postgres storage consumption"
-
-  if [ "$sos_version" == "old" ];then
-    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/postgres_disk_space"
-  else
-    cmd="cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
-  fi
-
-  log "$cmd"
+  log "// Checking the process/path"
+  log "cat $base_dir/ps | grep postgres | grep data"
   log "---"
-  log_cmd "$cmd"
+  log_cmd "cat $base_dir/ps | grep postgres | grep data"
   log "---"
   log
 
+  log "// postgres storage consumption - /var/lib/psql"
+  log "cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql"
+  log "---"
+  log
+
+  log "// postgres storage consumption - /var/opt/rh/rh-postgresql12/lib/pgsql/data"
+  log "cat $base_dir/sos_commands/postgresql/du_-sh_.var..opt.rh.rh-postgresql12.lib.pgsql"
+  log "---"
+  log_cmd "cat $base_dir/sos_commands/postgresql/du_-sh_.var..opt.rh.rh-postgresql12.lib.pgsql"
+  log "---"
+  log
 
   log "// TOP foreman tables consumption"
-  log "head -n30 $base_dir/sos_commands/katello/db_table_size"
+  log "head -n30 $base_dir/sos_commands/foreman/foreman_db_tables_sizes"
   log "---"
-  log_cmd "head -n30 $base_dir/sos_commands/katello/db_table_size"
+  log_cmd "head -n30 $base_dir/sos_commands/foreman/foreman_db_tables_sizes"
   log "---"
   log  
-
 
 
   log_tee "## Passenger"
