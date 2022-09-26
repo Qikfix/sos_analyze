@@ -1282,7 +1282,26 @@ report()
   log
 
 
- log
+  log "// Used answer file during the satellite-installer run"
+  log "cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep answer"
+  log "---"
+  log_cmd "cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep answer"
+  log "---"
+  log
+
+  log "// Current tuning preset"
+  log "cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep tunin"
+  log "---"
+  log_cmd "cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep tunin"
+  log "---"
+  log
+
+  log "// Current puma setting"
+  log "cat $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml | grep puma"
+  log "---"
+  log_cmd "cat $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml | grep puma"
+  log "---"
+  log
 
 
 
