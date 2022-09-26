@@ -1034,6 +1034,15 @@ report()
   log "---"
   log
 
+  log "// SCA Information"
+  log "$GREP -i \"content access mode\" $base_dir/var/log/candlepin/* | grep -o \"Auto-attach is disabled.*\" | sort -u | grep -v Skipping"
+  log "---"
+  log_cmd "$GREP -i \"content access mode\" $base_dir/var/log/candlepin/* | grep -o \"Auto-attach is disabled.*\" | sort -u | grep -v Skipping"
+  log "---"
+  log
+
+
+
 
   log_tee "## Cron"
   log
