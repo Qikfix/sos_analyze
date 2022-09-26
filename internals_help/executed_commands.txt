@@ -234,3 +234,6 @@ cat $base_dir/etc/systemd/system/smart_proxy_dynflow_core.service.d/90-limits.co
 cat $base_dir/etc/sysctl.conf | $GREP -F 'fs.aio-max-nr'
 $GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks
 $GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd
+cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep answer
+cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep tunin
+cat $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml | grep puma
