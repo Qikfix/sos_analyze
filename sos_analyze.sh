@@ -623,7 +623,7 @@ report()
   log
 
 
-  log_tee "## PostgreSQL Storage"
+  log_tee "## PostgreSQL"
   log
 
   log "// Checking the process/path"
@@ -653,6 +653,84 @@ report()
   log_cmd "head -n30 $base_dir/sos_commands/foreman/foreman_db_tables_sizes"
   log "---"
   log  
+
+
+  log_tee "## PostgreSQL Log - /var/lib/pgsql/"
+  log
+
+  log "// Deadlock count"
+  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log "---"
+  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log "---"
+  log
+
+  log "// Deadlock"
+  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log "---"
+  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log "---"
+  log
+
+  log "// ERROR count"
+  log "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log "---"
+  log_cmd "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log "---"
+  log
+
+  log "// ERROR"
+  log "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log "---"
+  log_cmd "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log "---"
+  log
+
+  log "// Current Configuration"
+  log "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | $GREP -v ^# | $GREP -v ^$ | $GREP -v ^\"\\t\\t\".*#"
+  log "---"
+  log_cmd "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | $GREP -v ^# | $GREP -v ^$ | $GREP -v ^\"\\t\\t\".*#"
+  log "---"
+  log
+
+
+  log_tee "## PostgreSQL Log - /var/opt/rh/rh-postgresql12/lib/pgsql/data"
+  log
+
+  log "// Deadlock count"
+  log "$GREP -I -i deadlock $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log -c"
+  log "---"
+  log_cmd "$GREP -I -i deadlock $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log -c"
+  log "---"
+  log
+
+  log "// Deadlock"
+  log "$GREP -I -i deadlock $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
+  log "---"
+  log_cmd "$GREP -I -i deadlock $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
+  log "---"
+  log
+
+  log "// ERROR count"
+  log "$GREP -F ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log -c"
+  log "---"
+  log_cmd "$GREP -F ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log -c"
+  log "---"
+  log
+
+  log "// ERROR"
+  log "$GREP -I ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
+  log "---"
+  log_cmd "$GREP -I ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log"
+  log "---"
+  log
+
+  log "// Current Configuration"
+  log "cat $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | $GREP -v ^# | $GREP -v ^$ | $GREP -v ^\"\\t\\t\".*#"
+  log "---"
+  log_cmd "cat $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | $GREP -v ^# | $GREP -v ^$ | $GREP -v ^\"\\t\\t\".*#"
+  log "---"
+  log
 
 
   log_tee "## Passenger"
@@ -1095,50 +1173,6 @@ report()
   log "---"
   log
 
-
-  log_tee "## PostgreSQL"
-  log
-
-  log "// Deadlock count"
- #log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
-  log "---"
- #log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
-  log "---"
-  log
-
-  log "// Deadlock"
-  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
-  log "---"
-  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
-  log "---"
-  log
-
-  log "// ERROR count"
- #log "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-  log "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
-  log "---"
- #log_cmd "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log | wc -l"
-  log_cmd "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
-  log "---"
-  log
-
-  log "// ERROR"
-  log "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"
-  log "---"
-  log_cmd "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"
-  log "---"
-  log
-
-
-
-  log "// Current Configuration"
-  log "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | $GREP -v ^# | $GREP -v ^$ | $GREP -v ^\"\\t\\t\".*#"
-  log "---"
-  log_cmd "cat $base_foreman/var/lib/pgsql/data/postgresql.conf | $GREP -v ^# | $GREP -v ^$ | $GREP -v ^\"\\t\\t\".*#"
-  log "---"
-  log
 
   log_tee "## Tuning"
   log
