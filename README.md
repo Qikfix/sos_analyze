@@ -68,4 +68,19 @@ Note. You will see the file as below. The content is all the commands executed b
 internals_help/executed_commands.txt
 ```
 
+# NEW FEATURE
+
+You can also pass some flags that can help you during this analysis. For example:
+```
+Please inform the path to the sosrepor dir that you would like to analyze.
+./sos_analyze.sh [OPTION] 01234567/sosreport_do_wall
+
+OPTION
+You can add a flags after ./sos_analyze.sh as informed below
+   -c copies the output file from the /tmp directory to the current directory
+   -l opens the output file from the current directory
+   -t opens the output file from the /tmp directory
+```
+
+
 Hope you enjoy it.
