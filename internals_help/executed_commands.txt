@@ -65,6 +65,7 @@ cat $base_dir/ps | sort -nr | awk '{print $1, $6}' | $GREP -v ^USER | $GREP -v ^
 cat $base_dir/ps | $GREP ^postgres | $GREP idle$ | $GREP "candlepin candlepin" | wc -l
 cat $base_dir/ps | $GREP ^postgres | $GREP idle$ | $GREP "foreman foreman" | wc -l
 cat $base_dir/ps | $GREP ^postgres | $GREP idle$ | wc -l
+cat $base_dir/ps | sort -nr -k10 | head -n5
 
 ## CPU
 cat $base_dir/proc/cpuinfo | $GREP processor | wc -l

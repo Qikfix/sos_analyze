@@ -387,7 +387,6 @@ report()
   log
 
   log "// users memory consumers"
- #log "cat $base_dir/ps | sort -nr | awk '{print \$1, \$6}' | grep -v ^USER | grep -v ^COMMAND | grep -v \"^ $\" | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
   log "cat $base_dir/ps | sort -nr | awk '{print \$1, \$6}' | $GREP -v ^USER | $GREP -v ^COMMAND | $GREP -v \"^ $\" | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
   log "and"
   log "memory_usage=\$(cat $base_dir/ps | sort -nr | awk '{print \$6}' | $GREP -v ^RSS | $GREP -v ^$ | paste -s -d+ | bc)"
@@ -421,6 +420,13 @@ report()
   log "cat $base_dir/ps | $GREP ^postgres | $GREP idle$ | wc -l"
   log "---"
   log_cmd "cat $base_dir/ps | $GREP ^postgres | $GREP idle$ | wc -l"
+  log "---"
+  log
+
+  log "// Processes running for a while (TOP 5 per time)"
+  log "cat $base_dir/ps | sort -nr -k10 | head -n5"
+  log "---"
+  log_cmd "cat $base_dir/ps | sort -nr -k10 | head -n5"
   log "---"
   log
 
