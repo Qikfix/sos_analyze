@@ -200,9 +200,9 @@ report()
   log
 
   log "// packages provided by 3rd party vendors"
-  log "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | $GREP -v \"Red Hat\" | sort -k2"
+  log "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | $GREP -v -e \"Red Hat\" -e katello-ca-consumer- | sort -k2"
   log "---"
-  log_cmd "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | $GREP -v \"Red Hat\" | sort -k2"
+  log_cmd "cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | $GREP -v -e \"Red Hat\" -e katello-ca-consumer- | sort -k2"
   log "---"
   log
 
