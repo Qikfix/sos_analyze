@@ -950,6 +950,14 @@ report()
   log "---"
   log
 
+  log "// Possible scanner queries"
+  log "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep \" 404 \" | grep -E '(\"-\" \"-\")' | head -n10"
+  log "---"
+  log_cmd "cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep \" 404 \" | grep -E '(\"-\" \"-\")' | head -n10"
+  log "---"
+  log
+
+
 
   log "// General 2XX errors on httpd logs"
   log "$GREP '\" 2\d\d ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print \$9}' | sort | uniq -c | sort -nr"
