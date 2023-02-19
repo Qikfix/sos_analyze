@@ -17,7 +17,7 @@ $GREP setroubleshoot $base_dir/installed-rpms
 
 ## Installed Packages (satellite)
 $GREP satellite $base_dir/installed-rpms
-cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | $GREP -v "Red Hat" | sort -k2
+cat $base_dir/sos_commands/rpm/package-data | cut -f1,4 | $GREP -v -e "Red Hat" -e katello-ca-consumer- | sort -k2
 
 ## Subscriptions
 cat $base_dir/sos_commands/subscription_manager/subscription-manager_identity
@@ -145,13 +145,13 @@ cat $base_dir/ps | $GREP dynflow_executor$
 
 ## Qpidd
 cmd="$EGREP '( queue| ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
-cmd="$EGREP '( queue| ===|katello_event_queue)' $base_dir/sos_commands/katello/$qpid_filename"
+cmd="$EGREP '( queue| ===|katello_event_queue)' $base_dir/sos_commands/$qpid_filename"
 
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | wc -l"
-cmd="cat $base_dir/sos_commands/katello/$qpid_filename | $GREP -F pulp.agent | wc -l"
+cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | wc -l"
 
 cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | $GREP " 1.*1$" | wc -l"
-cmd="cat $base_dir/sos_commands/katello/$qpid_filename | $GREP -F pulp.agent | $GREP " 1.*1$" | wc -l"
+cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | $GREP " 1.*1$" | wc -l"
 
 
 ## Foreman logs (error)
