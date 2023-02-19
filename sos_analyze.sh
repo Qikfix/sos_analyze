@@ -835,10 +835,13 @@ report()
   log
 
   if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
-    qpid_filename="qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
+    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
   fi
   if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 ]; then
-    qpid_filename="qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
+    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
+  fi
+  if [ -f $base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
+    qpid_filename="pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
   fi
 
   log "// katello_event_queue (foreman-tasks / dynflow is running?)"
@@ -846,7 +849,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
   else
-    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/katello/$qpid_filename"
+    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/$qpid_filename"
   fi
 
   log "$cmd"
@@ -861,7 +864,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | wc -l"
   else
-    cmd="cat $base_dir/sos_commands/katello/$qpid_filename | $GREP -F pulp.agent | wc -l"
+    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | wc -l"
   fi
 
   log "$cmd"
@@ -875,7 +878,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
   else
-    cmd="cat $base_dir/sos_commands/katello/$qpid_filename | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
+    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
   fi
 
   log "$cmd"
