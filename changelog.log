@@ -3,7 +3,7 @@ General Info
      48 [FEATURE]
      29 [ENHANCEMENT]
      24 [FIX]
-      2 [MAINTENANCE]
+      3 [MAINTENANCE]
 ---
 
 
@@ -118,6 +118,7 @@ General Info
 
 
 - [MAINTENANCE]
+  - Sun Feb 19 12:08:25 2023 -0800 | [MAINTENANCE] changelog updated
   - Thu Mar 12 17:11:28 2020 -0700 | [MAINTENANCE] - Merge branch 'master' of github.com:waldirio/sos_analyze into HEAD
   - Thu Mar 12 13:20:58 2020 -0700 | [MAINTENANCE] - Merge branch 'master' of github.com:waldirio/sos_analyze
 

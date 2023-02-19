@@ -512,6 +512,18 @@ report()
   log
 
 
+  log_tee "## Performance"
+  log
+
+  log "// Analyzing '/var/log/sa/sa' files and checking for values with low time"
+  log "for b in \$(ls \$base_dir/var/log/sa/sa[0-9]*); do echo - \$b;sar -f \$b | grep -E '(CPU|all)' | grep -E '( [0-9].[0-9]2\$)'; done"
+  log "---"
+  log_cmd "for b in \$(ls \$base_dir/var/log/sa/sa[0-9]*); do echo - \$b;sar -f \$b | grep -E '(CPU|all)' | grep -E '( [0-9].[0-9]2\$)'; done"
+  log "---"
+  log
+
+
+
 
   log_tee "## Foreman Tasks"
   log
