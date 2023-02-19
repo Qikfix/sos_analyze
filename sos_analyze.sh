@@ -188,6 +188,15 @@ report()
   log "---"
   log
 
+  log "// sealert information"
+  log "$GREP -o sealert.* $base_dir/var/log/messages | sort -u"
+  log "---"
+  log_cmd "$GREP -o sealert.* $base_dir/var/log/messages | sort -u"
+  log "---"
+  log
+
+
+
 
   log_tee "## Installed Packages (satellite)"
   log
