@@ -209,6 +209,7 @@ $GREP -F ERROR $base_foreman/var/log/candlepin/error.log | cut -d ' ' -f1,3- | u
 tail -30 $base_foreman/var/log/candlepin/error.log
 cat $base_dir/sos_commands/candlepin/du_-sh_.var.lib.candlepin
 $GREP -i "content access mode" $base_dir/var/log/candlepin/* | grep -o "Auto-attach is disabled.*" | sort -u | grep -v Skipping
+$GREP -o time=.* candlepin.log $base_dir/var/log/candlepin/* | sort -nr | sed -e 's/=/ /g' | sort -k2 -nr | uniq -c | head -n20 | sed -s 's/time /time=/g' | cut -d: -f2
 
 ## Cron
 ls -l $base_dir/var/spool/cron/*

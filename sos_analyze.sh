@@ -1181,6 +1181,14 @@ report()
   log "---"
   log
 
+  log "// Tasks in Candlepin - Time in miliseconds - TOP 20"
+  log "$GREP -o time=.* candlepin.log $base_dir/var/log/candlepin/* | sort -nr | sed -e 's/=/ /g' | sort -k2 -nr | uniq -c | head -n20 | sed -s 's/time /time=/g' | cut -d: -f2"
+  log "---"
+  log_cmd "$GREP -o time=.* candlepin.log $base_dir/var/log/candlepin/* | sort -nr | sed -e 's/=/ /g' | sort -k2 -nr | uniq -c | head -n20 | sed -s 's/time /time=/g' | cut -d: -f2"
+  log "---"
+  log
+
+
 
 
 
