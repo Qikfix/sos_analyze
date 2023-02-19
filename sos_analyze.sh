@@ -492,6 +492,17 @@ report()
   log "---"
   log
 
+  log "Pavel Moravec Script to check the memory usage during the oom killer"
+  log " - https://gitlab.cee.redhat.com/mna-emea/oom-process-stats"
+  log ""
+  log "// Memory Consumption"
+  log "/usr/bin/python3 /tmp/script/oom-process-stats.py $base_dir/var/log/messages"
+  log "---"
+  log_cmd "/usr/bin/python3 /tmp/script/oom-process-stats.py $base_dir/var/log/messages"
+  log "---"
+  log
+
+
 
   log_tee "## Foreman Tasks"
   log
