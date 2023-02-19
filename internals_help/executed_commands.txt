@@ -168,6 +168,7 @@ $GREP -F queue $base_foreman/var/log/httpd/error_log | awk '{print $2, $3}' | cu
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1,$4}' | cut -d: -f1,2,3 | sort | uniq -c | sort -nr | head -n20
 cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $1, $6, $7}' | sort | uniq -c | sort -nr | head -n 50
+cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | grep " 404 " | grep -E '("-" "-")' | head -n10
 $GREP '" 2dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
 $GREP '" 3dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
 $GREP '" 4dd ' $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | awk '{print $9}' | sort | uniq -c | sort -nr
