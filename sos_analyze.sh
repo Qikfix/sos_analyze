@@ -1443,13 +1443,15 @@ report()
 # cat virtwho/rpm_-V_virt-who 
 
 
+  # Insights call, in case the binary is around
+  which insights &>/dev/null
 
-
-  if [ /tmp/script/ins_check.sh ]; then
-    echo "Calling insights ..."
-    /tmp/script/ins_check.sh $sos_path >> $FOREMAN_REPORT
+  if [ $? -eq 0 ]; then
+    echo "Calling insights ..." >> $FOREMAN_REPORT
+    $(which insights) run -p shared_rules,telemetry,threescale_rules,ccx_ocp_core,ccx_rules_ocp $sos_path >> $FOREMAN_REPORT
     echo "done."
   fi
+
 
   if [ $COPY_TO_CURRENT_DIR ] || [ $OPEN_IN_VIM_RO_LOCAL_DIR ]; then
     echo 
