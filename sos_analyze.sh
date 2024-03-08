@@ -1448,6 +1448,9 @@ report()
   log
   log
 
+  log_tee "## LEAPP"
+  log
+
   log "// Checking for leapp package"
   log "grep leapp $base_dir/installed-rpms | sort"
   log "---"
@@ -1498,6 +1501,19 @@ report()
   log "---"
   log
 
+  log "// Unsupported LEAPP?"
+  log "grep -o LEAPP_UNSUPPORTED.* $base_dir/var/log/leapp/leapp-upgrade.log"
+  log "---"
+  log_cmd "grep -o LEAPP_UNSUPPORTED.* $base_dir/var/log/leapp/leapp-upgrade.log"
+  log "---"
+  log
+
+  log "// Target Version - Supported 8.6, 8.8 and 8.9"
+  log "grep -o LEAPP_UPGRADE_PATH_TARGET_RELEASE.* $base_dir/var/log/leapp/leapp-upgrade.log | awk '{print \$1}' | sort -u | sed \"s/',//g\""
+  log "---"
+  log_cmd "grep -o LEAPP_UPGRADE_PATH_TARGET_RELEASE.* $base_dir/var/log/leapp/leapp-upgrade.log | awk '{print \$1}' | sort -u | sed \"s/',//g\""
+  log "---"
+  log
 
 
 
@@ -1562,3 +1578,4 @@ if [ $OPEN_IN_EDITOR_TMP_DIR ]; then
    #echo placeholder 
    $EDITOR /tmp/report_${USER}_$final_name.log
 fi
+
