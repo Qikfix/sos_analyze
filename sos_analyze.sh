@@ -1443,11 +1443,69 @@ report()
 # cat virtwho/rpm_-V_virt-who 
 
 
+  log_tee "### Welcome to Report ###"
+  log_tee "### CEE/Anaconda ###"
+  log
+  log
+
+  log "// Checking for leapp package"
+  log "grep leapp $base_dir/installed-rpms | sort"
+  log "---"
+  log_cmd "grep leapp $base_dir/installed-rpms | sort"
+  log "---"
+  log "NOTE. You need version 0.16.0 or later of the leapp package and version 0.19.0 or later of the leapp-repository package, which contains the leapp-upgrade-el7toel8 RPM package."
+  log
+
+  log "// Checking for grub package"
+  log "grep grub $base_dir/installed-rpms | sort"
+  log "---"
+  log_cmd "grep grub $base_dir/installed-rpms | sort"
+  log "---"
+  log
+
+  log "// Checking for grub/grub2 folders"
+  log "ls -l $base_dir/boot/"
+  log "---"
+  log_cmd "ls -l $base_dir/boot/"
+  log "---"
+  log
+
+  log "// Checking the current default grub content"
+  log "cat $base_dir/etc/default/grub"
+  log "---"
+  log_cmd "cat $base_dir/etc/default/grub"
+  log "---"
+  log
+
+  log "// Checking the upgrade entry on grub2 menu"
+  log "grep upgrade $base_dir/boot/grub2/grub.cfg"
+  log "---"
+  log_cmd "grep upgrade $base_dir/boot/grub2/grub.cfg"
+  log "---"
+  log
+
+  log "// Checking for inhibitor"
+  log "grep inhibitor -A1 $base_dir/var/log/leapp/leapp-report.txt"
+  log "---"
+  log_cmd "grep inhibitor -A1 $base_dir/var/log/leapp/leapp-report.txt"
+  log "---"
+  log
+
+  log "// Full inhibitor list"
+  log "cat $base_dir/var/log/leapp/leapp-report.txt | awk 'BEGIN {} /.*inhibitor.*/,/^---/ { print } END {}'"
+  log "---"
+  log_cmd "cat $base_dir/var/log/leapp/leapp-report.txt | awk 'BEGIN {} /.*inhibitor.*/,/^---/ { print } END {}'"
+  log "---"
+  log
+
+
+
+
   # Insights call, in case the binary is around
   which insights &>/dev/null
 
   if [ $? -eq 0 ]; then
-    echo "Calling insights ..." >> $FOREMAN_REPORT
+    log "Calling insights ..."
     $(which insights) run -p shared_rules,telemetry,threescale_rules,ccx_ocp_core,ccx_rules_ocp $sos_path >> $FOREMAN_REPORT
     echo "done."
   fi
