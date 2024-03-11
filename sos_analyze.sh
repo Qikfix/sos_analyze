@@ -1502,9 +1502,9 @@ report()
   log
 
   log "// Unsupported LEAPP?"
-  log "grep -o LEAPP_UNSUPPORTED.* $base_dir/var/log/leapp/leapp-upgrade.log"
+  log "grep -o LEAPP_UNSUPPORTED.* $base_dir/var/log/leapp/leapp-upgrade.log | awk '{print \$1}' | sort -u | sed \"s/',//g\""
   log "---"
-  log_cmd "grep -o LEAPP_UNSUPPORTED.* $base_dir/var/log/leapp/leapp-upgrade.log"
+  log_cmd "grep -o LEAPP_UNSUPPORTED.* $base_dir/var/log/leapp/leapp-upgrade.log | awk '{print \$1}' | sort -u | sed \"s/',//g\""
   log "---"
   log
 
@@ -1512,6 +1512,34 @@ report()
   log "grep -o LEAPP_UPGRADE_PATH_TARGET_RELEASE.* $base_dir/var/log/leapp/leapp-upgrade.log | awk '{print \$1}' | sort -u | sed \"s/',//g\""
   log "---"
   log_cmd "grep -o LEAPP_UPGRADE_PATH_TARGET_RELEASE.* $base_dir/var/log/leapp/leapp-upgrade.log | awk '{print \$1}' | sort -u | sed \"s/',//g\""
+  log "---"
+  log
+
+  log "// Failed with exit"
+  log "grep \"failed with exit\" $base_dir/var/log/leapp/leapp-report.txt"
+  log "---"
+  log_cmd "grep \"failed with exit\" $base_dir/var/log/leapp/leapp-report.txt"
+  log "---"
+  log
+
+  log "// overlay filesystem"
+  log "grep overlay $base_dir/mount"
+  log "---"
+  log_cmd "grep overlay $base_dir/mount"
+  log "---"
+  log
+
+  log "// Error in the leapp-upgrade.log"
+  log "grep ERROR $base_dir/var/log/leapp/leapp-upgrade.log"
+  log "---"
+  log_cmd "grep ERROR $base_dir/var/log/leapp/leapp-upgrade.log"
+  log "---"
+  log
+
+  log "// Last lines of leapp-upgrade.log"
+  log "tail -n 40 $base_dir/var/log/leapp/leapp-upgrade.log"
+  log "---"
+  log_cmd "tail -n 40 $base_dir/var/log/leapp/leapp-upgrade.log"
   log "---"
   log
 
