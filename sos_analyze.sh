@@ -1501,6 +1501,20 @@ report()
   log "---"
   log
 
+  log "// Checking for error"
+  log "grep \"(error)\" -A1 $base_dir/var/log/leapp/leapp-report.txt"
+  log "---"
+  log_cmd "grep \"(error)\" -A1 $base_dir/var/log/leapp/leapp-report.txt"
+  log "---"
+  log
+
+  log "// Full error list"
+  log "cat $base_dir/var/log/leapp/leapp-report.txt | awk 'BEGIN {} /.*\(error\).*/,/^---/ { print } END {}'"
+  log "---"
+  log_cmd "cat $base_dir/var/log/leapp/leapp-report.txt | awk 'BEGIN {} /.*\(error\).*/,/^---/ { print } END {}'"
+  log "---"
+  log
+
   log "// Unsupported LEAPP?"
   log "grep -o LEAPP_UNSUPPORTED.* $base_dir/var/log/leapp/leapp-upgrade.log | awk '{print \$1}' | sort -u | sed \"s/',//g\""
   log "---"
