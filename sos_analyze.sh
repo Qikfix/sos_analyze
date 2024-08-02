@@ -165,9 +165,9 @@ report()
   log
 
   log "// current route"
-  log "cat $base_dir/route"
+  log "cat $base_dir/ip_route"
   log "---"
-  log_cmd "cat $base_dir/route"
+  log_cmd "cat $base_dir/ip_route"
   log "---"
   log
 
@@ -261,25 +261,28 @@ report()
 
 
   log "// enabled repos"
-  log "cat $base_dir/sos_commands/yum/yum_-C_repolist"
+  log "cat $base_dir/sos_commands/dnf/dnf_-C_repolist_--verbose"
   log "---"
-  log_cmd "cat $base_dir/sos_commands/yum/yum_-C_repolist"
+  log_cmd "cat $base_dir/sos_commands/dnf/dnf_-C_repolist_--verbose"
   log "---"
   log
 
   log "// yum history"
-  log "cat $base_dir/sos_commands/yum/yum_history"
+  log "cat $base_dir/sos_commands/dnf/dnf_history"
   log "---"
-  log_cmd "cat $base_dir/sos_commands/yum/yum_history"
+  log_cmd "cat $base_dir/sos_commands/dnf/dnf_history"
   log "---"
   log
 
-  log "// yum.log info"
-  log "cat $base_dir/var/log/yum.log"
-  log "---"
-  log_cmd "cat $base_dir/var/log/yum.log"
-  log "---"
-  log
+#  TODO
+#  improve this one, once the dnf.log has too much info
+#
+#  log "// yum.log info"
+#  log "cat $base_dir/var/log/dnf.log"
+#  log "---"
+#  log_cmd "cat $base_dir/var/log/dnf.log"
+#  log "---"
+#  log
 
 
   log_tee "## Upgrade"
@@ -426,13 +429,13 @@ report()
   log "// users memory consumers"
   log "cat $base_dir/ps | sort -nr | awk '{print \$1, \$6}' | $GREP -v ^USER | $GREP -v ^COMMAND | $GREP -v \"^ $\" | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
   log "and"
-  log "memory_usage=\$(cat $base_dir/ps | sort -nr | awk '{print \$6}' | $GREP -v ^RSS | $GREP -v ^$ | paste -s -d+ | bc)"
+  log "memory_usage=\$(cat $base_dir/ps | sort -nr | awk '{print \$6}' | grep -v ^-$ | $GREP -v ^RSS | $GREP -v ^$ | paste -s -d+ | bc)"
   log "and"
   log "memory_usage_gb=\$(echo \"scale=2;$memory_usage/1024/1024\" | bc)"
   log "---"
   log_cmd "cat $base_dir/ps | sort -nr | awk '{print \$1, \$6}' | $GREP -v ^USER | $GREP -v ^COMMAND | $GREP -v \"^ $\" | awk  '{a[\$1] += \$2} END{for (i in a) print i, a[i]}' | sort -nrk2"
   log
-  memory_usage=$(cat $base_dir/ps | sort -nr | awk '{print $6}' | $GREP -v ^RSS | $GREP -v ^$ | paste -s -d+ | bc)
+  memory_usage=$(cat $base_dir/ps | sort -nr | awk '{print $6}' | grep -v ^-$ | $GREP -v ^RSS | $GREP -v ^$ | paste -s -d+ | bc)
   memory_usage_gb=$(echo "scale=2;$memory_usage/1024/1024" | bc)
   log "Total Memory Consumed in KiB: $memory_usage"
   log "Total Memory Consumed in GiB: $memory_usage_gb"
@@ -546,7 +549,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="cat $base_dir/sos_commands/foreman/foreman-debug/foreman_tasks_tasks.csv | cut -d, -f3 | $GREP Actions | sort | uniq -c | sort -nr"
   else
-    cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed '1,3d' | cut -d\| -f3 | $GREP Actions | sort | uniq -c | sort -nr"
+    cmd="cat $base_dir/sos_commands/foreman/foreman_tasks_tasks | sed '1,3d' | cut -d, -f3 | $GREP Actions | sort | uniq -c | sort -nr"
   fi
 
 
@@ -582,25 +585,25 @@ report()
 
 
 
-  log_tee "## Pulp"
-  log
-
-  log "// number of tasks not finished"
-  log "$GREP '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks -c"
-  log "---"
-  log_cmd "$GREP '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks -c"
-  log "---"
-  log
-
-
-#grep "\"task_id\"" 02681559/0050-sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf.tar.xz/sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf/sos_commands/pulp/pulp-running_tasks | wc -l
-
-  log "// pulp task not finished"
-  log "$EGREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
-  log "---"
-  log_cmd "$EGREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
-  log "---"
-  log
+#  log_tee "## Pulp"
+#  log
+#
+#  log "// number of tasks not finished"
+#  log "$GREP '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks -c"
+#  log "---"
+#  log_cmd "$GREP '\"task_id\"' $base_dir/sos_commands/pulp/pulp-running_tasks -c"
+#  log "---"
+#  log
+#
+#
+##grep "\"task_id\"" 02681559/0050-sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf.tar.xz/sosreport-pc1ustsxrhs06-2020-06-26-kfmgbpf/sos_commands/pulp/pulp-running_tasks | wc -l
+#
+#  log "// pulp task not finished"
+#  log "$EGREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+#  log "---"
+#  log_cmd "$EGREP '(\"finish_time\" : null|\"start_time\"|\"state\"|\"pulp:|^})' $base_dir/sos_commands/pulp/pulp-running_tasks"
+#  log "---"
+#  log
 
 
 
@@ -631,7 +634,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="cat $base_dir/sos_commands/foreman/foreman-debug/katello_service_status"
   else
-    cmd="cat $base_dir/sos_commands/foreman/foreman-maintain_service_status"
+    cmd="cat $base_dir/sos_commands/foreman_installer/foreman-maintain_service_status"
   fi
 
   log "$cmd"
@@ -646,7 +649,7 @@ report()
   if [ "$sos_version" == "old" ];then
     cmd="$EGREP '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-debug/katello_service_status | tr '^\*' '\n'"
   else
-    cmd="$EGREP '(^\*|Active)' $base_dir/sos_commands/foreman/foreman-maintain_service_status | tr '^\*' '\n'"
+    cmd="$EGREP '(^\*|Active)' $base_dir/sos_commands/foreman_installer/foreman-maintain_service_status | tr '^\*' '\n'"
   fi
 
   log "$cmd"
@@ -678,15 +681,17 @@ report()
   log
 
 
-  log_tee "## MongoDB Storage"
-  log
-  # FIX
-  log "// mongodb storage consumption"
-  log "cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space"
-  log "---"
-  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space"
-  log "---"
-  log
+#  TO REMOVED
+#
+#  log_tee "## MongoDB Storage"
+#  log
+#  # FIX
+#  log "// mongodb storage consumption"
+#  log "cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space"
+#  log "---"
+#  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space"
+#  log "---"
+#  log
 
 
   log_tee "## PostgreSQL"
@@ -725,30 +730,30 @@ report()
   log
 
   log "// Deadlock count"
-  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/log/*.log -c"
   log "---"
-  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/log/*.log -c"
   log "---"
   log
 
   log "// Deadlock"
-  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/log/*.log"
   log "---"
-  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log_cmd "$GREP -I -i deadlock $base_foreman/var/lib/pgsql/data/log/*.log"
   log "---"
   log
 
   log "// ERROR count"
-  log "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/log/*.log -c"
   log "---"
-  log_cmd "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log -c"
+  log_cmd "$GREP -F ERROR $base_foreman/var/lib/pgsql/data/log/*.log -c"
   log "---"
   log
 
   log "// ERROR"
-  log "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/log/*.log"
   log "---"
-  log_cmd "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/pg_log/*.log"
+  log_cmd "$GREP -I ERROR $base_foreman/var/lib/pgsql/data/log/*.log"
   log "---"
   log
 
@@ -799,36 +804,38 @@ report()
   log
 
 
-  log_tee "## Passenger"
-  log
-
-  log "// current passenger status"
-
-  if [ "$sos_version" == "old" ];then
-    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool"
-  else
-    cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_pool"
-  fi
-
-  log "$cmd"
-  log "---"
-  log_cmd "$cmd"
-  log "---"
-  log
-
-  log "// URI requests"
-
-  if [ "$sos_version" == "old" ];then
-    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_requests | $GREP uri | sort -k3 | uniq -c"
-  else
-    cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_requests | $GREP uri | sort -k3 | uniq -c"
-  fi
-
-  log "$cmd"
-  log "---"
-  log_cmd "$cmd"
-  log "---"
-  log
+#  TO REMOVE
+#
+#  log_tee "## Passenger"
+#  log
+#
+#  log "// current passenger status"
+#
+#  if [ "$sos_version" == "old" ];then
+#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool"
+#  else
+#    cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_pool"
+#  fi
+#
+#  log "$cmd"
+#  log "---"
+#  log_cmd "$cmd"
+#  log "---"
+#  log
+#
+#  log "// URI requests"
+#
+#  if [ "$sos_version" == "old" ];then
+#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_requests | $GREP uri | sort -k3 | uniq -c"
+#  else
+#    cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_requests | $GREP uri | sort -k3 | uniq -c"
+#  fi
+#
+#  log "$cmd"
+#  log "---"
+#  log_cmd "$cmd"
+#  log "---"
+#  log
 
 
   log_tee "## Foreman Tasks"
@@ -843,61 +850,63 @@ report()
 
 
 
-  log_tee "## Qpidd"
-  log
-
-  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
-    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
-  fi
-  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 ]; then
-    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
-  fi
-  if [ -f $base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
-    qpid_filename="pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
-  fi
-
-  log "// katello_event_queue (foreman-tasks / dynflow is running?)"
-
-  if [ "$sos_version" == "old" ];then
-    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
-  else
-    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/$qpid_filename"
-  fi
-
-  log "$cmd"
-  log "---"
-  log_cmd "$cmd"
-  log "---"
-  log
-
-
-  log "// total number of pulp agents"
-
-  if [ "$sos_version" == "old" ];then
-    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | wc -l"
-  else
-    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | wc -l"
-  fi
-
-  log "$cmd"
-  log "---"
-  log_cmd "$cmd"
-  log "---"
-  log
-
-  log "// total number of (active) pulp agents"
-
-  if [ "$sos_version" == "old" ];then
-    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
-  else
-    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
-  fi
-
-  log "$cmd"
-  log "---"
-  log_cmd "$cmd"
-  log "---"
-  log
+#  TO REMOVE
+#  
+#  log_tee "## Qpidd"
+#  log
+#
+#  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
+#    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
+#  fi
+#  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 ]; then
+#    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
+#  fi
+#  if [ -f $base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
+#    qpid_filename="pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
+#  fi
+#
+#  log "// katello_event_queue (foreman-tasks / dynflow is running?)"
+#
+#  if [ "$sos_version" == "old" ];then
+#    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
+#  else
+#    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/$qpid_filename"
+#  fi
+#
+#  log "$cmd"
+#  log "---"
+#  log_cmd "$cmd"
+#  log "---"
+#  log
+#
+#
+#  log "// total number of pulp agents"
+#
+#  if [ "$sos_version" == "old" ];then
+#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | wc -l"
+#  else
+#    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | wc -l"
+#  fi
+#
+#  log "$cmd"
+#  log "---"
+#  log_cmd "$cmd"
+#  log "---"
+#  log
+#
+#  log "// total number of (active) pulp agents"
+#
+#  if [ "$sos_version" == "old" ];then
+#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
+#  else
+#    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
+#  fi
+#
+#  log "$cmd"
+#  log "---"
+#  log_cmd "$cmd"
+#  log "---"
+#  log
 
 
   log_tee "## Foreman logs (error)"
@@ -1148,12 +1157,14 @@ report()
   log "---"
   log
 
-  log "// cpdb"
-  log "cat $base_foreman/var/log/candlepin/cpdb.log"
-  log "---"
-  log_cmd "cat $base_foreman/var/log/candlepin/cpdb.log"
-  log "---"
-  log
+#  TO REMOVE
+#
+#  log "// cpdb"
+#  log "cat $base_foreman/var/log/candlepin/cpdb.log"
+#  log "---"
+#  log_cmd "cat $base_foreman/var/log/candlepin/cpdb.log"
+#  log "---"
+#  log
 
 
   log_tee "## Candlepin"
@@ -1262,12 +1273,14 @@ report()
   log_tee "## Tuning"
   log
 
-  log "// prefork.conf configuration"
-  log "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
-  log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
-  log "---"
-  log
+#  TO REMOVE
+#
+#  log "// prefork.conf configuration"
+#  log "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
+#  log "---"
+#  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
+#  log "---"
+#  log
 
   log "// 05-foreman.conf configuration"
   log "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'"
@@ -1290,19 +1303,21 @@ report()
   log "---"
   log
 
-  log "// passenger.conf configuration - 6.3 or less"
-  log "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-  log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-  log "---"
-  log
-
-  log "// passenger-extra.conf configuration - 6.4+"
-  log "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-  log "---"
-  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-  log "---"
-  log
+#  TO REMOVE
+#
+#  log "// passenger.conf configuration - 6.3 or less"
+#  log "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
+#  log "---"
+#  log_cmd "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
+#  log "---"
+#  log
+#
+#  log "// passenger-extra.conf configuration - 6.4+"
+#  log "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
+#  log "---"
+#  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
+#  log "---"
+#  log
 
   log "// pulp_workers configuration"
   log "cat $base_dir/etc/default/pulp_workers | $EGREP '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'"
@@ -1311,19 +1326,21 @@ report()
   log "---"
   log
 
-  log "// foreman-tasks/dynflow configuration - 6.3 or less"
-  log "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-  log "---"
-  log_cmd "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-  log "---"
-  log
-
-  log "// foreman-tasks/dynflow configuration - 6.4+"
-  log "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-  log "---"
-  log_cmd "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-  log "---"
-  log
+#  TO REMOVE
+#
+#  log "// foreman-tasks/dynflow configuration - 6.3 or less"
+#  log "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+#  log "---"
+#  log_cmd "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+#  log "---"
+#  log
+#
+#  log "// foreman-tasks/dynflow configuration - 6.4+"
+#  log "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+#  log "---"
+#  log_cmd "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
+#  log "---"
+#  log
 
   log "// postgres configuration"
   log "cat $base_dir/var/lib/pgsql/data/postgresql.conf | $EGREP 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | $GREP -v '^#'"
@@ -1339,22 +1356,24 @@ report()
   log "---"
   log
 
-  log "// qpidd configuration"
-  log "cat $base_dir/etc/qpid/qpidd.conf | $GREP -F 'mgmt_pub_interval'"
-  log "---"
-  log_cmd "cat $base_dir/etc/qpid/qpidd.conf | $GREP -F 'mgmt_pub_interval'"
-  log "---"
-  log
-
-  log "// Insert qpidd information"
-  log "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc"
-  log "---"
-  log_cmd "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc | awk '{print \"bytes: \"\$1}'"
-  fullsize_var_lib_qpid=$(cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP " [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} " | awk '{print $5}' | paste -s -d+ | bc)
-  size_var_lib_qpid=$(bytesToHumanReadable ${fullsize_var_lib_qpid})
-  log "size: ${size_var_lib_qpid}"
-  log "---"
-  log
+#  TO REMOVE
+#
+#  log "// qpidd configuration"
+#  log "cat $base_dir/etc/qpid/qpidd.conf | $GREP -F 'mgmt_pub_interval'"
+#  log "---"
+#  log_cmd "cat $base_dir/etc/qpid/qpidd.conf | $GREP -F 'mgmt_pub_interval'"
+#  log "---"
+#  log
+#
+#  log "// Insert qpidd information"
+#  log "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc"
+#  log "---"
+#  log_cmd "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc | awk '{print \"bytes: \"\$1}'"
+#  fullsize_var_lib_qpid=$(cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP " [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} " | awk '{print $5}' | paste -s -d+ | bc)
+#  size_var_lib_qpid=$(bytesToHumanReadable ${fullsize_var_lib_qpid})
+#  log "size: ${size_var_lib_qpid}"
+#  log "---"
+#  log
 
   log "// httpd|apache limits"
   log "cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | $GREP -F 'LimitNOFILE'"
@@ -1391,19 +1410,21 @@ report()
   log "---"
   log
 
-  log "// dynflow executors - 6.3 or less"
-  log "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
-  log "---"
-  log_cmd "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
-  log "---"
-  log
- 
-  log "// dynflow executors - 6.4 or greater"
-  log "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
-  log "---"
-  log_cmd "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
-  log "---"
-  log
+#  TO REMOVE
+#
+#  log "// dynflow executors - 6.3 or less"
+#  log "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
+#  log "---"
+#  log_cmd "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
+#  log "---"
+#  log
+# 
+#  log "// dynflow executors - 6.4 or greater"
+#  log "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
+#  log "---"
+#  log_cmd "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
+#  log "---"
+#  log
 
 
   log "// Used answer file during the satellite-installer run"
