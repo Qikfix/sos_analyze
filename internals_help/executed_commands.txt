@@ -114,9 +114,6 @@ $GREP ERROR $base_dir/var/log/puppetlabs/puppetserver/puppetserver.log
 ## Audit
 $GREP -o denied.* $base_dir/var/log/audit/audit.log | sort -u
 
-## MongoDB Storage
-cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space
-
 ## PostgreSQL
 cat $base_dir/ps | grep postgres | grep data
 cat $base_dir/sos_commands/postgresql/du_-sh_.var.lib.pgsql
@@ -137,27 +134,8 @@ $GREP -F ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log
 $GREP -I ERROR $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/log/*.log
 cat $base_foreman/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf | $GREP -v ^# | $GREP -v ^$ | $GREP -v ^"\t\t".*#
 
-## Passenger
-0"
-0"
-
-0"
-0"
-
-
 ## Foreman Tasks
 cat $base_dir/ps | $GREP dynflow_executor$
-
-## Qpidd
-0"
-0"
-
-0"
-0"
-
-0"
-0"
-
 
 ## Foreman logs (error)
 $GREP -I -F "[E" $base_foreman/var/log/foreman/production.log* | awk '{print $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' | sort | uniq -c | sort -nr | head -n40
@@ -204,7 +182,6 @@ cat $base_foreman/var/log/httpd/foreman-ssl_access_ssl.log | $GREP -F "cmd=virt-
 
 ## Tomcat
 $GREP -F tomcat $base_dir/ps
-cat $base_foreman/var/log/candlepin/cpdb.log
 
 ## Candlepin
 $GREP -F -B1 Updated $base_foreman/var/log/candlepin/candlepin.log
@@ -227,26 +204,17 @@ cat $base_foreman/etc/foreman/settings.yaml
 cat $base_foreman/etc/foreman-installer/custom-hiera.yaml
 
 ## Tuning
-cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'
 cat $base_dir/etc/httpd/conf.d/05-foreman.conf | $EGREP 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
 cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.conf | $EGREP 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'
 cat $base_dir/etc/httpd/conf.d/05-foreman-ssl.d/katello.conf | $EGREP 'KeepAliveb|MaxKeepAliveRequests|KeepAliveTimeout'
-cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'
-cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'
 cat $base_dir/etc/default/pulp_workers | $EGREP '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'
-cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'
-cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'
 cat $base_dir/var/lib/pgsql/data/postgresql.conf | $EGREP 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | $GREP -v '^#'
 cat $base_dir/etc/tomcat/tomcat.conf | $GREP -F 'JAVA_OPTS'
-cat $base_dir/etc/qpid/qpidd.conf | $GREP -F 'mgmt_pub_interval'
-cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP " [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} " | awk '{print $5}' | paste -s -d+ | bc | awk '{print "bytes: "$1}'
 cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | $GREP -F 'LimitNOFILE'
 cat $base_dir/etc/systemd/system/qdrouterd.service.d/90-limits.conf | $GREP -F 'LimitNOFILE'
 cat $base_dir/etc/systemd/system/qpidd.service.d/90-limits.conf | $GREP -F 'LimitNOFILE'
 cat $base_dir/etc/systemd/system/smart_proxy_dynflow_core.service.d/90-limits.conf | $GREP -F 'LimitNOFILE'
 cat $base_dir/etc/sysctl.conf | $GREP -F 'fs.aio-max-nr'
-$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks
-$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd
 cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep answer
 cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep tunin
 cat $base_dir/etc/foreman-installer/scenarios.d/satellite-answers.yaml | grep puma

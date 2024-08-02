@@ -681,19 +681,6 @@ report()
   log
 
 
-#  TO REMOVED
-#
-#  log_tee "## MongoDB Storage"
-#  log
-#  # FIX
-#  log "// mongodb storage consumption"
-#  log "cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space"
-#  log "---"
-#  log_cmd "cat $base_dir/sos_commands/foreman/foreman-debug/mongodb_disk_space"
-#  log "---"
-#  log
-
-
   log_tee "## PostgreSQL"
   log
 
@@ -804,40 +791,6 @@ report()
   log
 
 
-#  TO REMOVE
-#
-#  log_tee "## Passenger"
-#  log
-#
-#  log "// current passenger status"
-#
-#  if [ "$sos_version" == "old" ];then
-#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_pool"
-#  else
-#    cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_pool"
-#  fi
-#
-#  log "$cmd"
-#  log "---"
-#  log_cmd "$cmd"
-#  log "---"
-#  log
-#
-#  log "// URI requests"
-#
-#  if [ "$sos_version" == "old" ];then
-#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/passenger_status_requests | $GREP uri | sort -k3 | uniq -c"
-#  else
-#    cmd="cat $base_dir/sos_commands/foreman/passenger-status_--show_requests | $GREP uri | sort -k3 | uniq -c"
-#  fi
-#
-#  log "$cmd"
-#  log "---"
-#  log_cmd "$cmd"
-#  log "---"
-#  log
-
-
   log_tee "## Foreman Tasks"
   log
 
@@ -848,65 +801,6 @@ report()
   log "---"
   log
 
-
-
-#  TO REMOVE
-#  
-#  log_tee "## Qpidd"
-#  log
-#
-#  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
-#    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
-#  fi
-#  if [ -f $base_dir/sos_commands/katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671 ]; then
-#    qpid_filename="katello/qpid-stat_-q_--ssl-certificate_.etc.pki.katello.qpid_client_striped.crt_-b_amqps_..localhost_5671"
-#  fi
-#  if [ -f $base_dir/sos_commands/pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671 ]; then
-#    qpid_filename="pulp/qpid-stat_-q_--ssl-certificate_.etc.pki.pulp.qpid.client.crt_-b_amqps_..localhost_5671"
-#  fi
-#
-#  log "// katello_event_queue (foreman-tasks / dynflow is running?)"
-#
-#  if [ "$sos_version" == "old" ];then
-#    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q"
-#  else
-#    cmd="$EGREP '(  queue|  ===|katello_event_queue)' $base_dir/sos_commands/$qpid_filename"
-#  fi
-#
-#  log "$cmd"
-#  log "---"
-#  log_cmd "$cmd"
-#  log "---"
-#  log
-#
-#
-#  log "// total number of pulp agents"
-#
-#  if [ "$sos_version" == "old" ];then
-#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | wc -l"
-#  else
-#    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | wc -l"
-#  fi
-#
-#  log "$cmd"
-#  log "---"
-#  log_cmd "$cmd"
-#  log "---"
-#  log
-#
-#  log "// total number of (active) pulp agents"
-#
-#  if [ "$sos_version" == "old" ];then
-#    cmd="cat $base_dir/sos_commands/foreman/foreman-debug/qpid-stat-q | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
-#  else
-#    cmd="cat $base_dir/sos_commands/$qpid_filename | $GREP -F pulp.agent | $GREP \" 1.*1\$\" | wc -l"
-#  fi
-#
-#  log "$cmd"
-#  log "---"
-#  log_cmd "$cmd"
-#  log "---"
-#  log
 
 
   log_tee "## Foreman logs (error)"
@@ -1157,15 +1051,6 @@ report()
   log "---"
   log
 
-#  TO REMOVE
-#
-#  log "// cpdb"
-#  log "cat $base_foreman/var/log/candlepin/cpdb.log"
-#  log "---"
-#  log_cmd "cat $base_foreman/var/log/candlepin/cpdb.log"
-#  log "---"
-#  log
-
 
   log_tee "## Candlepin"
   log
@@ -1273,15 +1158,6 @@ report()
   log_tee "## Tuning"
   log
 
-#  TO REMOVE
-#
-#  log "// prefork.conf configuration"
-#  log "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
-#  log "---"
-#  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/prefork.conf | $EGREP 'ServerLimit|StartServers'"
-#  log "---"
-#  log
-
   log "// 05-foreman.conf configuration"
   log "cat $base_dir/etc/httpd/conf.d/05-foreman.conf | $EGREP 'KeepAlive\b|MaxKeepAliveRequests|KeepAliveTimeout|PassengerMinInstances'"
   log "---"
@@ -1303,44 +1179,12 @@ report()
   log "---"
   log
 
-#  TO REMOVE
-#
-#  log "// passenger.conf configuration - 6.3 or less"
-#  log "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-#  log "---"
-#  log_cmd "cat $base_dir/etc/httpd/conf.d/passenger.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-#  log "---"
-#  log
-#
-#  log "// passenger-extra.conf configuration - 6.4+"
-#  log "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-#  log "---"
-#  log_cmd "cat $base_dir/etc/httpd/conf.modules.d/passenger_extra.conf | $EGREP 'MaxPoolSize|PassengerMaxRequestQueueSize'"
-#  log "---"
-#  log
-
   log "// pulp_workers configuration"
   log "cat $base_dir/etc/default/pulp_workers | $EGREP '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'"
   log "---"
   log_cmd "cat $base_dir/etc/default/pulp_workers | $EGREP '^PULP_MAX_TASKS_PER_CHILD|^PULP_CONCURRENCY'"
   log "---"
   log
-
-#  TO REMOVE
-#
-#  log "// foreman-tasks/dynflow configuration - 6.3 or less"
-#  log "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-#  log "---"
-#  log_cmd "cat $base_dir/etc/sysconfig/foreman-tasks | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-#  log "---"
-#  log
-#
-#  log "// foreman-tasks/dynflow configuration - 6.4+"
-#  log "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-#  log "---"
-#  log_cmd "cat $base_dir/etc/sysconfig/dynflowd | $EGREP 'EXECUTOR_MEMORY_LIMIT|EXECUTOR_MEMORY_MONITOR_DELAY|EXECUTOR_MEMORY_MONITOR_INTERVAL'"
-#  log "---"
-#  log
 
   log "// postgres configuration"
   log "cat $base_dir/var/lib/pgsql/data/postgresql.conf | $EGREP 'max_connections|shared_buffers|work_mem|checkpoint_segments|checkpoint_completion_target' | $GREP -v '^#'"
@@ -1355,25 +1199,6 @@ report()
   log_cmd "cat $base_dir/etc/tomcat/tomcat.conf | $GREP -F 'JAVA_OPTS'"
   log "---"
   log
-
-#  TO REMOVE
-#
-#  log "// qpidd configuration"
-#  log "cat $base_dir/etc/qpid/qpidd.conf | $GREP -F 'mgmt_pub_interval'"
-#  log "---"
-#  log_cmd "cat $base_dir/etc/qpid/qpidd.conf | $GREP -F 'mgmt_pub_interval'"
-#  log "---"
-#  log
-#
-#  log "// Insert qpidd information"
-#  log "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc"
-#  log "---"
-#  log_cmd "cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP \" [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} \" | awk '{print \$5}' | paste -s -d+ | bc | awk '{print \"bytes: \"\$1}'"
-#  fullsize_var_lib_qpid=$(cat $base_dir/sos_commands/qpid/ls_-lanR_.var.lib.qpidd | $GREP " [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2} " | awk '{print $5}' | paste -s -d+ | bc)
-#  size_var_lib_qpid=$(bytesToHumanReadable ${fullsize_var_lib_qpid})
-#  log "size: ${size_var_lib_qpid}"
-#  log "---"
-#  log
 
   log "// httpd|apache limits"
   log "cat $base_dir/etc/systemd/system/httpd.service.d/limits.conf | $GREP -F 'LimitNOFILE'"
@@ -1409,23 +1234,6 @@ report()
   log_cmd "cat $base_dir/etc/sysctl.conf | $GREP -F 'fs.aio-max-nr'"
   log "---"
   log
-
-#  TO REMOVE
-#
-#  log "// dynflow executors - 6.3 or less"
-#  log "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
-#  log "---"
-#  log_cmd "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/foreman-tasks"
-#  log "---"
-#  log
-# 
-#  log "// dynflow executors - 6.4 or greater"
-#  log "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
-#  log "---"
-#  log_cmd "$GREP -F EXECUTORS_COUNT $base_dir/etc/sysconfig/dynflowd"
-#  log "---"
-#  log
-
 
   log "// Used answer file during the satellite-installer run"
   log "cat $base_dir/etc/foreman-installer/scenarios.d/satellite.yaml | grep answer"
